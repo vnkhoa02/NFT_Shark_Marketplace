@@ -6,33 +6,17 @@ import {
   ScriptOnce,
   Scripts,
 } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/react-start";
-import { getWebRequest } from "@tanstack/react-start/server";
 
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
-import { auth } from "~/lib/server/auth";
+import { WagmiProvider } from "wagmi";
 import appCss from "~/lib/styles/app.css?url";
-
-const getUser = createServerFn({ method: "GET" }).handler(async () => {
-  const { headers } = getWebRequest()!;
-  const session = await auth.api.getSession({ headers });
-
-  return session?.user || null;
-});
+import { config } from "~/lib/wagmi/config";
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
-  user: Awaited<ReturnType<typeof getUser>>;
 }>()({
-  beforeLoad: async ({ context }) => {
-    const user = await context.queryClient.fetchQuery({
-      queryKey: ["user"],
-      queryFn: ({ signal }) => getUser({ signal }),
-    }); // we're using react-query for caching, see router.tsx
-    return { user };
-  },
   head: () => ({
     meta: [
       {
@@ -43,11 +27,11 @@ export const Route = createRootRouteWithContext<{
         content: "width=device-width, initial-scale=1",
       },
       {
-        title: "React TanStarter",
+        title: "NFT Shark",
       },
       {
         name: "description",
-        content: "A minimal starter template for 🏝️ TanStack Start.",
+        content: "NFT Marketplace & Sport Betting",
       },
     ],
     links: [{ rel: "stylesheet", href: appCss }],
@@ -57,9 +41,11 @@ export const Route = createRootRouteWithContext<{
 
 function RootComponent() {
   return (
-    <RootDocument>
-      <Outlet />
-    </RootDocument>
+    <WagmiProvider config={config}>
+      <RootDocument>
+        <Outlet />
+      </RootDocument>
+    </WagmiProvider>
   );
 }
 
@@ -79,7 +65,6 @@ function RootDocument({ children }: { readonly children: React.ReactNode }) {
         </ScriptOnce>
 
         {children}
-
         <ReactQueryDevtools buttonPosition="bottom-left" />
         <TanStackRouterDevtools position="bottom-right" />
 
