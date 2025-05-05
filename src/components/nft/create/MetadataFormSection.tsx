@@ -110,6 +110,7 @@ export default function MetadataFormSection({ register, setValue, errors }: Prop
               id="price"
               type="number"
               step="0.01"
+              min="0"
               {...register("price", { valueAsNumber: true })}
             />
             {errors.price && (

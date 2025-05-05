@@ -1,8 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 import FileUploadSection from "~/components/nft/create/FileUploadSection";
 import MetadataFormSection from "~/components/nft/create/MetadataFormSection";
@@ -16,15 +17,13 @@ const maxSize = 10 * 1024 * 1024; // 10MB
 
 export default function CreateNtf() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const { setFile, link: tokenURI, isUploading } = usePinata();
-  const { isConnected, mintNew, getTxStatus, writingContract, waitForReceipt } = useNft();
+  const { setFile, uploadFile, uploadJSON, isUploading } = usePinata();
+  const { isConnected, waitForReceipt, writeHash, mintNew, getTxStatus } = useNft();
 
-  // 2) Set up RHF with Zod
   const {
     register,
     handleSubmit,
     formState: { errors, isValid },
-    reset,
     watch,
     setValue,
   } = useForm<NftFormValues>({
@@ -40,53 +39,63 @@ export default function CreateNtf() {
     },
   });
 
-  // 3) onSubmit handler
   const onSubmit: SubmitHandler<NftFormValues> = async (data) => {
-    if (!isConnected) {
-      alert("Connect your wallet first");
+    if (isUploading) {
+      console.error("Data is still uploading");
       return;
     }
-    if (!tokenURI) {
-      alert("Image is still uploading");
-      return;
-    }
-
-    // merge metadata + tokenURI
+    const ipfsLink = await uploadFile();
     const metadata = {
       ...data,
-      image: tokenURI,
+      image: ipfsLink,
       attributes: [
         { trait_type: "Category", value: data.category },
         { trait_type: "Blockchain", value: data.blockchain },
       ],
     };
-
-    // mint
-    mintNew(JSON.stringify(metadata));
-    const status = await getTxStatus();
-    if (status === "success") {
-      alert("NFT minted! 🎉");
-      reset();
-      setPreviewImage(null);
-    } else {
-      alert("Mint failed 😢");
-    }
+    const metadataIpfs = await uploadJSON(metadata);
+    if (!metadataIpfs) return;
+    await mintNew(metadataIpfs);
   };
 
-  // 4) file change
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > maxSize) {
-      return alert("Max file size is 10MB");
+      return console.error("Max file size is 10MB");
     }
     setFile(file);
     setPreviewImage(URL.createObjectURL(file));
   };
 
+  useEffect(() => {
+    if (!writeHash) return;
+    toast.info("Track your Transaction!", {
+      description: (
+        <a
+          href={`https://sepolia.etherscan.io/tx/${writeHash}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-black underline"
+        >
+          View on Etherscan
+        </a>
+      ),
+    });
+    getTxStatus().then((status) => {
+      if (status === "success") {
+        toast.success("NFT minted! 🎉");
+      } else {
+        toast.error("Mint failed 😢");
+      }
+    });
+  }, [getTxStatus, writeHash]);
+
+  if (!isConnected) return null;
+
   // watch errors to disable submit
-  const canSubmit =
-    isValid && !!previewImage && !isUploading && !writingContract && !waitForReceipt;
+  const canSubmit = isValid && !!previewImage && !isUploading && !waitForReceipt;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -101,7 +110,7 @@ export default function CreateNtf() {
         Create and list your NFT on the marketplace
       </p>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <div>
         <div className="grid gap-8 md:grid-cols-2">
           {/* File uploader */}
           <FileUploadSection
@@ -121,11 +130,11 @@ export default function CreateNtf() {
         </div>
 
         <div className="mt-8 flex justify-end">
-          <Button type="submit" disabled={!canSubmit}>
-            {writingContract ? "Minting…" : waitForReceipt ? "Confirming…" : "Create NFT"}
+          <Button type="submit" disabled={!canSubmit} onClick={handleSubmit(onSubmit)}>
+            {waitForReceipt ? "Minting…" : "Create NFT"}
           </Button>
         </div>
-      </form>
+      </div>
     </div>
   );
 }

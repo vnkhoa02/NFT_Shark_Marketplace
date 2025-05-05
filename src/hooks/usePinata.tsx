@@ -6,50 +6,56 @@ const pinata = new PinataSDK({
   pinataGateway: import.meta.env.VITE_GATEWAY_URL,
 });
 
+const getPresignUrl = async () => {
+  const urlResponse = await fetch(
+    `${import.meta.env.VITE_SERVER_URL}/api/presigned_url`,
+    {
+      method: "GET",
+      headers: {},
+    },
+  );
+
+  if (!urlResponse.ok) {
+    throw new Error("Failed to get presigned URL");
+  }
+  const data = await urlResponse.json();
+  return data;
+};
+
 const usePinata = () => {
   const [file, setFile] = useState<File | null>(null);
-  const [uploadStatus, setUploadStatus] = useState("");
+  const [error, setError] = useState("");
   const [link, setLink] = useState("");
   const [isUploading, setIsUploading] = useState(false);
 
-  const uploadFile = async (file: File): Promise<string | null> => {
+  const uploadFile = async (upFile?: File): Promise<string | null> => {
+    if (!upFile && file) upFile = file;
+    if (!upFile) throw Error("File required");
+    setIsUploading(true);
     try {
-      setUploadStatus("Requesting presigned URL...");
-      setIsUploading(true);
+      const data = await getPresignUrl();
+      const upload = await pinata.upload.public.file(upFile).url(data.url);
 
-      const urlResponse = await fetch(
-        `${import.meta.env.VITE_SERVER_URL}/api/presigned_url`,
-        {
-          method: "GET",
-          headers: {
-            // Add auth header if required
-          },
-        },
-      );
-
-      if (!urlResponse.ok) {
-        throw new Error("Failed to get presigned URL");
-      }
-
-      const data = await urlResponse.json();
-      setUploadStatus("Uploading to Pinata...");
-
-      const upload = await pinata.upload.public.file(file).url(data.url);
-
-      if (!upload.cid) {
-        throw new Error("Pinata upload failed");
-      }
-
+      if (!upload.cid) throw new Error("Pinata upload failed");
       const ipfsLink = await pinata.gateways.public.convert(upload.cid);
       setLink(ipfsLink);
-      setUploadStatus("Upload successful!");
-
-      return ipfsLink;
+      return upload.cid;
     } catch (error) {
-      setUploadStatus(
-        `Upload error: ${error instanceof Error ? error.message : String(error)}`,
-      );
+      setError(`Upload error: ${error instanceof Error ? error.message : String(error)}`);
       return null;
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const uploadJSON = async (obj: object): Promise<string | null> => {
+    setIsUploading(true);
+    try {
+      const data = await getPresignUrl();
+      const upload = await pinata.upload.public.json(obj).url(data.url);
+      if (!upload.cid) throw new Error("JSON upload failed");
+      const ipfsLink = await pinata.gateways.public.convert(upload.cid);
+      return ipfsLink;
     } finally {
       setIsUploading(false);
     }
@@ -57,11 +63,12 @@ const usePinata = () => {
 
   return {
     file,
-    setFile,
     link,
     isUploading,
-    uploadStatus,
-    uploadFile, // in case you want to call it manually
+    error,
+    setFile,
+    uploadFile,
+    uploadJSON,
   };
 };
 

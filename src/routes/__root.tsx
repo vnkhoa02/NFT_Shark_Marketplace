@@ -12,6 +12,7 @@ import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
 import { WagmiProvider } from "wagmi";
 import { Navbar } from "~/components/Navbar";
+import { Toaster } from "~/components/ui/sonner";
 import appCss from "~/lib/styles/app.css?url";
 import { config } from "~/lib/wagmi/config";
 
@@ -67,6 +68,7 @@ function RootDocument({ children }: { readonly children: React.ReactNode }) {
         </ScriptOnce>
 
         {children}
+        <Toaster />
         <ReactQueryDevtools buttonPosition="bottom-left" />
         <TanStackRouterDevtools position="bottom-right" />
 

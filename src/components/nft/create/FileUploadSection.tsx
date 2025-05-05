@@ -42,7 +42,10 @@ export default function FileUploadSection({
               <Upload className="text-muted-foreground mb-4 h-12 w-12" />
               <p className="mb-2 font-medium">Drag & drop or click to browse</p>
               <Label htmlFor="nft-file" className="cursor-pointer">
-                <Button disabled={isUploading}>
+                <Button
+                  disabled={isUploading}
+                  onClick={() => document.getElementById("nft-file")?.click()}
+                >
                   {isUploading ? "Uploading…" : "Choose File"}
                 </Button>
                 <Input
