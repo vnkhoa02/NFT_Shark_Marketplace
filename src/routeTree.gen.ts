@@ -11,24 +11,18 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as DashboardRouteImport } from './routes/dashboard/route'
-import { Route as authRouteImport } from './routes/(auth)/route'
 import { Route as IndexImport } from './routes/index'
-import { Route as DashboardIndexImport } from './routes/dashboard/index'
-import { Route as authLoginImport } from './routes/(auth)/login'
+import { Route as NftIndexImport } from './routes/nft/index'
+import { Route as MarketplaceIndexImport } from './routes/marketplace/index'
+import { Route as CollectionsIndexImport } from './routes/collections/index'
+import { Route as BettingIndexImport } from './routes/betting/index'
+import { Route as NftCreateIndexImport } from './routes/nft/create/index'
+import { Route as NftArtistsIndexImport } from './routes/nft/artists/index'
+import { Route as NftIdIndexImport } from './routes/nft/$id/index'
+import { Route as CollectionsIdIndexImport } from './routes/collections/$id/index'
+import { Route as BettingLeaguesIndexImport } from './routes/betting/leagues/index'
 
 // Create/Update Routes
-
-const DashboardRouteRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const authRouteRoute = authRouteImport.update({
-  id: '/(auth)',
-  getParentRoute: () => rootRoute,
-} as any)
 
 const IndexRoute = IndexImport.update({
   id: '/',
@@ -36,16 +30,58 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const DashboardIndexRoute = DashboardIndexImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => DashboardRouteRoute,
+const NftIndexRoute = NftIndexImport.update({
+  id: '/nft/',
+  path: '/nft/',
+  getParentRoute: () => rootRoute,
 } as any)
 
-const authLoginRoute = authLoginImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => authRouteRoute,
+const MarketplaceIndexRoute = MarketplaceIndexImport.update({
+  id: '/marketplace/',
+  path: '/marketplace/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const CollectionsIndexRoute = CollectionsIndexImport.update({
+  id: '/collections/',
+  path: '/collections/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const BettingIndexRoute = BettingIndexImport.update({
+  id: '/betting/',
+  path: '/betting/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const NftCreateIndexRoute = NftCreateIndexImport.update({
+  id: '/nft/create/',
+  path: '/nft/create/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const NftArtistsIndexRoute = NftArtistsIndexImport.update({
+  id: '/nft/artists/',
+  path: '/nft/artists/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const NftIdIndexRoute = NftIdIndexImport.update({
+  id: '/nft/$id/',
+  path: '/nft/$id/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const CollectionsIdIndexRoute = CollectionsIdIndexImport.update({
+  id: '/collections/$id/',
+  path: '/collections/$id/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const BettingLeaguesIndexRoute = BettingLeaguesIndexImport.update({
+  id: '/betting/leagues/',
+  path: '/betting/leagues/',
+  getParentRoute: () => rootRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -59,110 +95,178 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/(auth)': {
-      id: '/(auth)'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof authRouteImport
+    '/betting/': {
+      id: '/betting/'
+      path: '/betting'
+      fullPath: '/betting'
+      preLoaderRoute: typeof BettingIndexImport
       parentRoute: typeof rootRoute
     }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
+    '/collections/': {
+      id: '/collections/'
+      path: '/collections'
+      fullPath: '/collections'
+      preLoaderRoute: typeof CollectionsIndexImport
       parentRoute: typeof rootRoute
     }
-    '/(auth)/login': {
-      id: '/(auth)/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof authLoginImport
-      parentRoute: typeof authRouteImport
+    '/marketplace/': {
+      id: '/marketplace/'
+      path: '/marketplace'
+      fullPath: '/marketplace'
+      preLoaderRoute: typeof MarketplaceIndexImport
+      parentRoute: typeof rootRoute
     }
-    '/dashboard/': {
-      id: '/dashboard/'
-      path: '/'
-      fullPath: '/dashboard/'
-      preLoaderRoute: typeof DashboardIndexImport
-      parentRoute: typeof DashboardRouteImport
+    '/nft/': {
+      id: '/nft/'
+      path: '/nft'
+      fullPath: '/nft'
+      preLoaderRoute: typeof NftIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/betting/leagues/': {
+      id: '/betting/leagues/'
+      path: '/betting/leagues'
+      fullPath: '/betting/leagues'
+      preLoaderRoute: typeof BettingLeaguesIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/collections/$id/': {
+      id: '/collections/$id/'
+      path: '/collections/$id'
+      fullPath: '/collections/$id'
+      preLoaderRoute: typeof CollectionsIdIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/nft/$id/': {
+      id: '/nft/$id/'
+      path: '/nft/$id'
+      fullPath: '/nft/$id'
+      preLoaderRoute: typeof NftIdIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/nft/artists/': {
+      id: '/nft/artists/'
+      path: '/nft/artists'
+      fullPath: '/nft/artists'
+      preLoaderRoute: typeof NftArtistsIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/nft/create/': {
+      id: '/nft/create/'
+      path: '/nft/create'
+      fullPath: '/nft/create'
+      preLoaderRoute: typeof NftCreateIndexImport
+      parentRoute: typeof rootRoute
     }
   }
 }
 
 // Create and export the route tree
 
-interface authRouteRouteChildren {
-  authLoginRoute: typeof authLoginRoute
-}
-
-const authRouteRouteChildren: authRouteRouteChildren = {
-  authLoginRoute: authLoginRoute,
-}
-
-const authRouteRouteWithChildren = authRouteRoute._addFileChildren(
-  authRouteRouteChildren,
-)
-
-interface DashboardRouteRouteChildren {
-  DashboardIndexRoute: typeof DashboardIndexRoute
-}
-
-const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
-  DashboardIndexRoute: DashboardIndexRoute,
-}
-
-const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(
-  DashboardRouteRouteChildren,
-)
-
 export interface FileRoutesByFullPath {
-  '/': typeof authRouteRouteWithChildren
-  '/dashboard': typeof DashboardRouteRouteWithChildren
-  '/login': typeof authLoginRoute
-  '/dashboard/': typeof DashboardIndexRoute
+  '/': typeof IndexRoute
+  '/betting': typeof BettingIndexRoute
+  '/collections': typeof CollectionsIndexRoute
+  '/marketplace': typeof MarketplaceIndexRoute
+  '/nft': typeof NftIndexRoute
+  '/betting/leagues': typeof BettingLeaguesIndexRoute
+  '/collections/$id': typeof CollectionsIdIndexRoute
+  '/nft/$id': typeof NftIdIndexRoute
+  '/nft/artists': typeof NftArtistsIndexRoute
+  '/nft/create': typeof NftCreateIndexRoute
 }
 
 export interface FileRoutesByTo {
-  '/': typeof authRouteRouteWithChildren
-  '/login': typeof authLoginRoute
-  '/dashboard': typeof DashboardIndexRoute
+  '/': typeof IndexRoute
+  '/betting': typeof BettingIndexRoute
+  '/collections': typeof CollectionsIndexRoute
+  '/marketplace': typeof MarketplaceIndexRoute
+  '/nft': typeof NftIndexRoute
+  '/betting/leagues': typeof BettingLeaguesIndexRoute
+  '/collections/$id': typeof CollectionsIdIndexRoute
+  '/nft/$id': typeof NftIdIndexRoute
+  '/nft/artists': typeof NftArtistsIndexRoute
+  '/nft/create': typeof NftCreateIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/(auth)': typeof authRouteRouteWithChildren
-  '/dashboard': typeof DashboardRouteRouteWithChildren
-  '/(auth)/login': typeof authLoginRoute
-  '/dashboard/': typeof DashboardIndexRoute
+  '/betting/': typeof BettingIndexRoute
+  '/collections/': typeof CollectionsIndexRoute
+  '/marketplace/': typeof MarketplaceIndexRoute
+  '/nft/': typeof NftIndexRoute
+  '/betting/leagues/': typeof BettingLeaguesIndexRoute
+  '/collections/$id/': typeof CollectionsIdIndexRoute
+  '/nft/$id/': typeof NftIdIndexRoute
+  '/nft/artists/': typeof NftArtistsIndexRoute
+  '/nft/create/': typeof NftCreateIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/login' | '/dashboard/'
+  fullPaths:
+    | '/'
+    | '/betting'
+    | '/collections'
+    | '/marketplace'
+    | '/nft'
+    | '/betting/leagues'
+    | '/collections/$id'
+    | '/nft/$id'
+    | '/nft/artists'
+    | '/nft/create'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/dashboard'
+  to:
+    | '/'
+    | '/betting'
+    | '/collections'
+    | '/marketplace'
+    | '/nft'
+    | '/betting/leagues'
+    | '/collections/$id'
+    | '/nft/$id'
+    | '/nft/artists'
+    | '/nft/create'
   id:
     | '__root__'
     | '/'
-    | '/(auth)'
-    | '/dashboard'
-    | '/(auth)/login'
-    | '/dashboard/'
+    | '/betting/'
+    | '/collections/'
+    | '/marketplace/'
+    | '/nft/'
+    | '/betting/leagues/'
+    | '/collections/$id/'
+    | '/nft/$id/'
+    | '/nft/artists/'
+    | '/nft/create/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  authRouteRoute: typeof authRouteRouteWithChildren
-  DashboardRouteRoute: typeof DashboardRouteRouteWithChildren
+  BettingIndexRoute: typeof BettingIndexRoute
+  CollectionsIndexRoute: typeof CollectionsIndexRoute
+  MarketplaceIndexRoute: typeof MarketplaceIndexRoute
+  NftIndexRoute: typeof NftIndexRoute
+  BettingLeaguesIndexRoute: typeof BettingLeaguesIndexRoute
+  CollectionsIdIndexRoute: typeof CollectionsIdIndexRoute
+  NftIdIndexRoute: typeof NftIdIndexRoute
+  NftArtistsIndexRoute: typeof NftArtistsIndexRoute
+  NftCreateIndexRoute: typeof NftCreateIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  authRouteRoute: authRouteRouteWithChildren,
-  DashboardRouteRoute: DashboardRouteRouteWithChildren,
+  BettingIndexRoute: BettingIndexRoute,
+  CollectionsIndexRoute: CollectionsIndexRoute,
+  MarketplaceIndexRoute: MarketplaceIndexRoute,
+  NftIndexRoute: NftIndexRoute,
+  BettingLeaguesIndexRoute: BettingLeaguesIndexRoute,
+  CollectionsIdIndexRoute: CollectionsIdIndexRoute,
+  NftIdIndexRoute: NftIdIndexRoute,
+  NftArtistsIndexRoute: NftArtistsIndexRoute,
+  NftCreateIndexRoute: NftCreateIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -176,32 +280,46 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/(auth)",
-        "/dashboard"
+        "/betting/",
+        "/collections/",
+        "/marketplace/",
+        "/nft/",
+        "/betting/leagues/",
+        "/collections/$id/",
+        "/nft/$id/",
+        "/nft/artists/",
+        "/nft/create/"
       ]
     },
     "/": {
       "filePath": "index.tsx"
     },
-    "/(auth)": {
-      "filePath": "(auth)/route.tsx",
-      "children": [
-        "/(auth)/login"
-      ]
+    "/betting/": {
+      "filePath": "betting/index.tsx"
     },
-    "/dashboard": {
-      "filePath": "dashboard/route.tsx",
-      "children": [
-        "/dashboard/"
-      ]
+    "/collections/": {
+      "filePath": "collections/index.tsx"
     },
-    "/(auth)/login": {
-      "filePath": "(auth)/login.tsx",
-      "parent": "/(auth)"
+    "/marketplace/": {
+      "filePath": "marketplace/index.tsx"
     },
-    "/dashboard/": {
-      "filePath": "dashboard/index.tsx",
-      "parent": "/dashboard"
+    "/nft/": {
+      "filePath": "nft/index.tsx"
+    },
+    "/betting/leagues/": {
+      "filePath": "betting/leagues/index.tsx"
+    },
+    "/collections/$id/": {
+      "filePath": "collections/$id/index.tsx"
+    },
+    "/nft/$id/": {
+      "filePath": "nft/$id/index.tsx"
+    },
+    "/nft/artists/": {
+      "filePath": "nft/artists/index.tsx"
+    },
+    "/nft/create/": {
+      "filePath": "nft/create/index.tsx"
     }
   }
 }
