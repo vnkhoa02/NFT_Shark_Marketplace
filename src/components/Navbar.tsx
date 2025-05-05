@@ -17,7 +17,6 @@ import {
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
-  NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
@@ -30,10 +29,83 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "~/components/ui/sheet";
+import { useIsMounted } from "~/hooks/useIsMounted";
 import ConnectWallet from "./ConnectWallet";
 
-export function Navbar() {
+function RightNav() {
   const { isConnected } = useAccount();
+  const isMounted = useIsMounted();
+  if (!isMounted) return null;
+
+  return (
+    <div className="flex items-center gap-4">
+      <div className="relative hidden w-full md:flex md:w-auto md:max-w-sm md:flex-1">
+        <Search className="text-muted-foreground absolute top-2.5 left-2.5 h-4 w-4" />
+        <Input
+          type="search"
+          placeholder="Search NFTs, collections, events..."
+          className="pl-8"
+        />
+      </div>
+
+      {isConnected ? (
+        <>
+          <Button variant="outline" size="icon" className="relative">
+            <Bell className="h-5 w-5" />
+            <Badge className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center p-0">
+              3
+            </Badge>
+            <span className="sr-only">Notifications</span>
+          </Button>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="rounded-full">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src="/placeholder.svg?height=32&width=32" alt="User" />
+                  <AvatarFallback>Me</AvatarFallback>
+                </Avatar>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {/* <DropdownMenuItem>
+            <Link to="/profile" className="w-full">
+              Profile
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <Link to="/my-nfts" className="w-full">
+              My NFTs
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <Link to="/my-bets" className="w-full">
+              My Bets
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>
+            <Link to="/settings" className="w-full">
+              Settings
+            </Link>
+          </DropdownMenuItem> */}
+              <DropdownMenuItem>
+                <ConnectWallet />
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </>
+      ) : (
+        <div className="flex items-center gap-2">
+          <ConnectWallet />
+        </div>
+      )}
+    </div>
+  );
+}
+export function Navbar() {
   return (
     <header className="bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 w-full border-b backdrop-blur">
       <div className="container flex h-16 items-center justify-between px-4 md:px-6">
@@ -94,16 +166,12 @@ export function Navbar() {
             <NavigationMenuList>
               <NavigationMenuItem>
                 <Link to="/marketplace">
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                    Marketplace
-                  </NavigationMenuLink>
+                  <div className={navigationMenuTriggerStyle()}>Marketplace</div>
                 </Link>
               </NavigationMenuItem>
               <NavigationMenuItem>
                 <Link to="/betting">
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                    Sports Betting
-                  </NavigationMenuLink>
+                  <div className={navigationMenuTriggerStyle()}>Sports Betting</div>
                 </Link>
               </NavigationMenuItem>
               <NavigationMenuItem>
@@ -112,32 +180,32 @@ export function Navbar() {
                   <ul className="grid w-[400px] grid-cols-2 gap-3 p-4 md:w-[500px] lg:w-[600px]">
                     <li>
                       <Link to="/collections">
-                        <NavigationMenuLink className="hover:bg-accent block space-y-1 rounded-md p-3">
+                        <div className="hover:bg-accent block space-y-1 rounded-md p-3">
                           <div className="text-sm font-medium">Collections</div>
                           <div className="text-muted-foreground text-xs">
                             Browse popular NFT collections
                           </div>
-                        </NavigationMenuLink>
+                        </div>
                       </Link>
                     </li>
                     <li>
                       <Link to="/nft/artists">
-                        <NavigationMenuLink className="hover:bg-accent block space-y-1 rounded-md p-3">
+                        <div className="hover:bg-accent block space-y-1 rounded-md p-3">
                           <div className="text-sm font-medium">Artists</div>
                           <div className="text-muted-foreground text-xs">
                             Discover top NFT creators
                           </div>
-                        </NavigationMenuLink>
+                        </div>
                       </Link>
                     </li>
                     <li>
                       <Link to="/betting/leagues">
-                        <NavigationMenuLink className="hover:bg-accent block space-y-1 rounded-md p-3">
+                        <div className="hover:bg-accent block space-y-1 rounded-md p-3">
                           <div className="text-sm font-medium">Sports Leagues</div>
                           <div className="text-muted-foreground text-xs">
                             Bet on major sports leagues
                           </div>
-                        </NavigationMenuLink>
+                        </div>
                       </Link>
                     </li>
                   </ul>
@@ -145,80 +213,13 @@ export function Navbar() {
               </NavigationMenuItem>
               <NavigationMenuItem>
                 <Link to="/nft/create">
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                    Create
-                  </NavigationMenuLink>
+                  <div className={navigationMenuTriggerStyle()}>Create</div>
                 </Link>
               </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
         </div>
-
-        <div className="flex items-center gap-4">
-          <div className="relative hidden w-full md:flex md:w-auto md:max-w-sm md:flex-1">
-            <Search className="text-muted-foreground absolute top-2.5 left-2.5 h-4 w-4" />
-            <Input
-              type="search"
-              placeholder="Search NFTs, collections, events..."
-              className="pl-8"
-            />
-          </div>
-
-          {isConnected ? (
-            <>
-              <Button variant="outline" size="icon" className="relative">
-                <Bell className="h-5 w-5" />
-                <Badge className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center p-0">
-                  3
-                </Badge>
-                <span className="sr-only">Notifications</span>
-              </Button>
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="rounded-full">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src="/placeholder.svg?height=32&width=32" alt="User" />
-                      <AvatarFallback>Me</AvatarFallback>
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  {/* <DropdownMenuItem>
-                    <Link to="/profile" className="w-full">
-                      Profile
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Link to="/my-nfts" className="w-full">
-                      My NFTs
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Link to="/my-bets" className="w-full">
-                      My Bets
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <Link to="/settings" className="w-full">
-                      Settings
-                    </Link>
-                  </DropdownMenuItem> */}
-                  <DropdownMenuItem>
-                    <ConnectWallet />
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </>
-          ) : (
-            <div className="flex items-center gap-2">
-              <ConnectWallet />
-            </div>
-          )}
-        </div>
+        <RightNav />
       </div>
     </header>
   );
