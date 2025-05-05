@@ -18,7 +18,14 @@ const maxSize = 10 * 1024 * 1024; // 10MB
 export default function CreateNtf() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const { setFile, uploadFile, uploadJSON, isUploading } = usePinata();
-  const { isConnected, waitForReceipt, writeHash, mintNew, getTxStatus } = useNft();
+  const {
+    isConnected,
+    waitForReceipt,
+    writingContract,
+    writeHash,
+    mintNew,
+    getTxStatus,
+  } = useNft();
 
   const {
     register,
@@ -95,7 +102,8 @@ export default function CreateNtf() {
   if (!isConnected) return null;
 
   // watch errors to disable submit
-  const canSubmit = isValid && !!previewImage && !isUploading && !waitForReceipt;
+  const canSubmit =
+    isValid && !!previewImage && !isUploading && !waitForReceipt && !writingContract;
 
   return (
     <div className="container mx-auto px-4 py-8">

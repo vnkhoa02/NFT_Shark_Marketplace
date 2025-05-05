@@ -39,7 +39,7 @@ const usePinata = () => {
       if (!upload.cid) throw new Error("Pinata upload failed");
       const ipfsLink = await pinata.gateways.public.convert(upload.cid);
       setLink(ipfsLink);
-      return upload.cid;
+      return ipfsLink;
     } catch (error) {
       setError(`Upload error: ${error instanceof Error ? error.message : String(error)}`);
       return null;
