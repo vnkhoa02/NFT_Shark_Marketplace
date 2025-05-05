@@ -23,18 +23,15 @@ export const auth = betterAuth({
 
   // https://www.better-auth.com/docs/concepts/oauth
   socialProviders: {
-    github: {
-      clientId: process.env.GITHUB_CLIENT_ID!,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
-    },
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      mapProfileToUser: (profile: { given_name: string; family_name: string; }) => {
+        return {
+          firstName: profile.given_name,
+          lastName: profile.family_name,
+        };
+      },
     },
-  },
-
-  // https://www.better-auth.com/docs/authentication/email-password
-  emailAndPassword: {
-    enabled: true,
   },
 });
