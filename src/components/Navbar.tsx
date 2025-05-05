@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Bell, Menu, Search, ShoppingCart, Wallet } from "lucide-react";
+import { Bell, FishSymbol, Menu, Search } from "lucide-react";
 import { useAccount } from "wagmi";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Badge } from "~/components/ui/badge";
@@ -86,7 +86,7 @@ export function Navbar() {
           </Sheet>
 
           <Link to="/" className="flex items-center gap-2">
-            <ShoppingCart className="h-6 w-6 text-cyan-500" />
+            <FishSymbol className="h-6 w-6 text-cyan-500" />
             <span className="hidden text-xl font-bold md:inline-block">NFT Shark</span>
           </Link>
 
@@ -174,17 +174,12 @@ export function Navbar() {
                 <span className="sr-only">Notifications</span>
               </Button>
 
-              <Button variant="outline" size="icon" className="hidden md:flex">
-                <Wallet className="h-5 w-5" />
-                <span className="sr-only">Wallet</span>
-              </Button>
-
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" className="rounded-full">
                     <Avatar className="h-8 w-8">
                       <AvatarImage src="/placeholder.svg?height=32&width=32" alt="User" />
-                      <AvatarFallback>US</AvatarFallback>
+                      <AvatarFallback>Me</AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>

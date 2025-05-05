@@ -65,7 +65,7 @@ export default function ConnectWallet() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="bg-purple-600 text-white hover:bg-purple-700">
+        <Button className="bg-blue-600 text-white hover:bg-blue-900">
           <Wallet className="mr-2 h-4 w-4" />
           Connect Wallet
         </Button>

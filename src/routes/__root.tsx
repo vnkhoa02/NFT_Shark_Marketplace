@@ -11,6 +11,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
 import { WagmiProvider } from "wagmi";
+import { Navbar } from "~/components/Navbar";
 import appCss from "~/lib/styles/app.css?url";
 import { config } from "~/lib/wagmi/config";
 
@@ -43,6 +44,7 @@ function RootComponent() {
   return (
     <WagmiProvider config={config}>
       <RootDocument>
+        <Navbar />
         <Outlet />
       </RootDocument>
     </WagmiProvider>
