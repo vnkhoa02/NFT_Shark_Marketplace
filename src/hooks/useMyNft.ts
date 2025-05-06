@@ -21,13 +21,13 @@ export default function useMyNft() {
     retry: 2,
   });
 
-  async function fetchNftById(tokenId: bigint | string) {
+  async function fetchNftById(tokenId: bigint | string, contractAddress?: `0x${string}`) {
     const ntf = nfts.find((n) => n.id == tokenId);
     if (ntf) return ntf;
     if (!publicClient) throw Error("publicClient required!");
 
     const tokenURI = (await publicClient.readContract({
-      address: SHARK_721_ADDRESS,
+      address: contractAddress ?? SHARK_721_ADDRESS,
       abi: sharkNftAbi,
       functionName: "tokenURI",
       args: [tokenId],

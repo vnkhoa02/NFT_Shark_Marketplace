@@ -11,6 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+import { parseEtherToReadable } from "~/lib/wagmi/utils";
 import { NFT } from "~/types/nft";
 
 interface IProps {
@@ -52,7 +53,7 @@ export function NftGrid({ nfts, handleListNFT }: IProps) {
               />
               <div className="absolute top-2 right-2 flex gap-1">
                 <Badge className="bg-background/80 text-foreground backdrop-blur-sm">
-                  {nft?.price ?? "?"}
+                  {parseEtherToReadable(nft?.price) + " ETH"}
                 </Badge>
               </div>
             </div>
@@ -71,18 +72,13 @@ export function NftGrid({ nfts, handleListNFT }: IProps) {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  {nft.status === "owned" ? (
+                  {nft.status === "owned" && (
                     <DropdownMenuItem
                       onClick={() => handleListNFT(nft.id)}
                       className="cursor-pointer"
                     >
                       <Tag className="mr-2 h-4 w-4" />
                       List for Sale
-                    </DropdownMenuItem>
-                  ) : (
-                    <DropdownMenuItem className="cursor-pointer">
-                      <Tag className="mr-2 h-4 w-4" />
-                      Update Listing
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuItem className="cursor-pointer">

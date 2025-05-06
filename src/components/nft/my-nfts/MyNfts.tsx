@@ -1,16 +1,10 @@
 import { Link } from "@tanstack/react-router";
-import { Search, SlidersHorizontal } from "lucide-react";
+import { Search } from "lucide-react";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import useMarketplaceSearch from "~/hooks/useMarketplaceSearch";
 import useMyNft from "~/hooks/useMyNft";
 import ListingDialog from "./ListingDialog";
 import MyNftLoading from "./MyNftLoading";
@@ -19,35 +13,26 @@ import { NftGrid } from "./NftGrid";
 export default function MyNFTs() {
   const [activeTab, setActiveTab] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortOrder, setSortOrder] = useState("recently-added");
   const [selectedNFT, setSelectedNFT] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const { nfts, loading } = useMyNft();
-
-  const filtered = nfts
-    .filter((nft) =>
-      activeTab === "all" ? true : nft.category.toLowerCase() === activeTab,
-    )
-    .filter(
-      (n) =>
-        !searchQuery ||
-        n.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        n.collection.toLowerCase().includes(searchQuery.toLowerCase()),
-    );
-
-  const sorted = [...filtered].sort((a, b) => {
-    if (sortOrder === "a-z") return a.title.localeCompare(b.title);
-    if (sortOrder === "z-a") return b.title.localeCompare(a.title);
-    return 0;
-  });
+  const { nfts, loading } = useMyNft(); // owned NFTs
+  const { listedNfts, isMPFetching } = useMarketplaceSearch(); // listed NFTs
 
   const handleListClick = (id: string) => {
     setSelectedNFT(id);
     setDialogOpen(true);
   };
 
-  if (loading) return <MyNftLoading />;
+  const filterBySearch = (list: typeof nfts) =>
+    list.filter(
+      (n) =>
+        !searchQuery ||
+        n.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        n.collection.toLowerCase().includes(searchQuery.toLowerCase()),
+    );
+
+  if (loading || isMPFetching) return <MyNftLoading />;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -62,7 +47,7 @@ export default function MyNFTs() {
         </Link>
       </div>
 
-      {/* Filters & Search */}
+      {/* Search */}
       <div className="mb-8 flex flex-col gap-4 md:flex-row">
         <div className="relative flex-1">
           <Search className="text-muted-foreground absolute top-2.5 left-2.5 h-4 w-4" />
@@ -74,29 +59,10 @@ export default function MyNFTs() {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <Select value={sortOrder} onValueChange={setSortOrder}>
-          <SelectTrigger className="w-full md:w-[200px]">
-            <SelectValue placeholder="Sort by" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="recently-added">Recently Added</SelectItem>
-            <SelectItem value="oldest-first">Oldest First</SelectItem>
-            <SelectItem value="a-z">Name: A to Z</SelectItem>
-            <SelectItem value="z-a">Name: Z to A</SelectItem>
-          </SelectContent>
-        </Select>
-        <Button variant="outline" className="gap-2">
-          <SlidersHorizontal className="h-4 w-4" /> Filters
-        </Button>
       </div>
 
-      {/* Tabs & NFT Grid */}
-      <Tabs
-        defaultValue="all"
-        value={activeTab}
-        onValueChange={setActiveTab}
-        className="mb-8"
-      >
+      {/* Tabs */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
         <TabsList>
           {["all", "owned", "listed"].map((tab) => (
             <TabsTrigger key={tab} value={tab}>
@@ -104,11 +70,19 @@ export default function MyNFTs() {
             </TabsTrigger>
           ))}
         </TabsList>
-        {["all", "owned", "listed"].map((tab) => (
-          <TabsContent key={tab} value={tab} className="mt-6">
-            <NftGrid nfts={sorted} handleListNFT={handleListClick} />
-          </TabsContent>
-        ))}
+
+        <TabsContent value="all" className="mt-6">
+          <NftGrid
+            nfts={filterBySearch([...nfts, ...listedNfts])}
+            handleListNFT={handleListClick}
+          />
+        </TabsContent>
+        <TabsContent value="owned" className="mt-6">
+          <NftGrid nfts={filterBySearch(nfts)} handleListNFT={handleListClick} />
+        </TabsContent>
+        <TabsContent value="listed" className="mt-6">
+          <NftGrid nfts={filterBySearch(listedNfts)} handleListNFT={handleListClick} />
+        </TabsContent>
       </Tabs>
 
       {/* Listing Dialog */}

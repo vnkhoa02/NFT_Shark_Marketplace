@@ -9,3 +9,10 @@ export interface NFT {
   category: string;
   status: "owned" | "listed";
 }
+
+export interface ItemListedEvent {
+  nft: string;
+  tokenId: string;
+  price: bigint;
+  category: string;
+}
