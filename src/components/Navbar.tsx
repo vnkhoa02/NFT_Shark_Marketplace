@@ -68,29 +68,19 @@ function RightNav() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuLabel>Quick Access</DropdownMenuLabel>
               <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <Link to="/nft/my-nfts" className="w-full">
+                  My NFTs
+                </Link>
+              </DropdownMenuItem>
               {/* <DropdownMenuItem>
-            <Link to="/profile" className="w-full">
-              Profile
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Link to="/my-nfts" className="w-full">
-              My NFTs
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Link to="/my-bets" className="w-full">
-              My Bets
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>
-            <Link to="/settings" className="w-full">
-              Settings
-            </Link>
-          </DropdownMenuItem> */}
+                <Link to="/my-bets" className="w-full">
+                  My Bets
+                </Link>
+              </DropdownMenuItem> */}
+              <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <ConnectWallet />
               </DropdownMenuItem>
@@ -210,11 +200,6 @@ export function Navbar() {
                     </li>
                   </ul>
                 </NavigationMenuContent>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <Link to="/nft/create">
-                  <div className={navigationMenuTriggerStyle()}>Create</div>
-                </Link>
               </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
