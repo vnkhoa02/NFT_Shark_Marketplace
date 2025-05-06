@@ -1,6 +1,8 @@
 import React from "react";
 import { Img } from "react-image";
 
+const placeholderSrc = "https://picsum.photos/seed/640/425.webp?random,blur";
+
 interface OptimizedImageProps {
   src: string;
   alt: string;
@@ -8,7 +10,6 @@ interface OptimizedImageProps {
   height?: number;
   className?: string;
 }
-
 const OptimizedImage: React.FC<OptimizedImageProps> = ({
   src,
   alt,
@@ -22,7 +23,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
       alt={alt}
       style={{ width, height }}
       className={className}
-      loader={<div>Loading image…</div>}
+      loader={<img src={placeholderSrc} alt="placeholder" />}
     />
   );
 };

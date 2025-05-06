@@ -1,17 +1,23 @@
 import { Link } from "@tanstack/react-router";
-import { MoreHorizontal } from "lucide-react";
+import { ArrowUpDown, Eye, MoreHorizontal, Tag, Trash2 } from "lucide-react";
 import Image from "~/components/Image";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "~/components/ui/card";
-import { DropdownMenu, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
 import { NFT } from "~/types/nft";
 
 interface IProps {
   nfts: NFT[];
   handleListNFT: (id: string) => void;
 }
-export function NftGrid({ nfts }: IProps) {
+export function NftGrid({ nfts, handleListNFT }: IProps) {
   if (nfts.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-md border p-12 text-center">
@@ -38,11 +44,11 @@ export function NftGrid({ nfts }: IProps) {
       {nfts.map((nft) => (
         <Card key={nft.id} className="overflow-hidden transition-all hover:shadow-lg">
           <CardHeader className="p-0">
-            <div className="relative aspect-square">
+            <div className="relative">
               <Image
                 src={nft.image || "/placeholder.svg"}
                 alt={nft.title}
-                className="object-cover"
+                className="w-full object-cover"
               />
               <div className="absolute top-2 right-2 flex gap-1">
                 <Badge className="bg-background/80 text-foreground backdrop-blur-sm">
@@ -64,20 +70,7 @@ export function NftGrid({ nfts }: IProps) {
                     <span className="sr-only">Actions</span>
                   </Button>
                 </DropdownMenuTrigger>
-                {/* <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link
-                      to={`/nft/$id`}
-                      params={{
-                        id: nft.id,
-                      }}
-                      className="cursor-pointer"
-                    >
-                      View Details
-                    </Link>
-                  </DropdownMenuItem>
+                <DropdownMenuContent align="end">
                   {nft.status === "owned" ? (
                     <DropdownMenuItem
                       onClick={() => handleListNFT(nft.id)}
@@ -103,7 +96,7 @@ export function NftGrid({ nfts }: IProps) {
                       Cancel Listing
                     </DropdownMenuItem>
                   )}
-                </DropdownMenuContent> */}
+                </DropdownMenuContent>
               </DropdownMenu>
             </div>
             <div className="text-muted-foreground mt-2 text-sm">{nft.collection}</div>
@@ -116,7 +109,7 @@ export function NftGrid({ nfts }: IProps) {
               }}
             >
               <Button size="sm" variant="outline">
-                View
+                <Eye className="h-4 w-4" /> View
               </Button>
             </Link>
           </CardFooter>

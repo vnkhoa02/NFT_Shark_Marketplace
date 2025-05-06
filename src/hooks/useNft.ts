@@ -1,7 +1,6 @@
 import { waitForTransactionReceipt } from "@wagmi/core";
 import sharkNftAbi from "abi/Shark721NFT.json";
 import { useCallback, useEffect, useState } from "react";
-import { parseEther } from "viem";
 import { useAccount, useReadContract, useWriteContract } from "wagmi";
 import { SHARK_721_ADDRESS } from "~/lib/addresses/contract";
 import { config } from "~/lib/wagmi/config";
@@ -33,7 +32,7 @@ export default function useNft() {
 
   // ========== WRITE FUNCTIONS ==========
 
-  const mintNew = async (tokenURI: string) => {
+  const mintNew = (tokenURI: string) => {
     if (!address || !tokenURI) return;
     writeContract({
       address: SHARK_721_ADDRESS,
@@ -41,17 +40,6 @@ export default function useNft() {
       functionName: "mintNew",
       args: [address, tokenURI],
       value: 0n,
-    });
-  };
-
-  const mintPayable = (to: string, tokenURI: string, ethAmount: string) => {
-    if (!to || !tokenURI || parseFloat(ethAmount) < 0.001) return;
-    writeContract({
-      address: SHARK_721_ADDRESS,
-      abi: sharkNftAbi,
-      functionName: "mintNew",
-      args: [to, tokenURI],
-      value: parseEther(ethAmount),
     });
   };
 
@@ -85,7 +73,6 @@ export default function useNft() {
     name,
     symbol,
     mintNew,
-    mintPayable,
     getTxStatus,
     error,
     writeHash,

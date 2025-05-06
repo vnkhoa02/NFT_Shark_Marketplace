@@ -45,8 +45,9 @@ async function fetchMyNFTs(
           description: metadata?.description,
           image: metadata.image || "",
           collection: metadata.collection || "SharkNFT",
-          price: metadata.price || 0,
+          price: metadata.price || "Free",
           category: metadata.category || "",
+          status: "owned",
         } as NFT;
       })(),
     );

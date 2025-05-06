@@ -5,9 +5,6 @@ export const NftSchema = z.object({
   description: z.string().optional(),
   category: z.string(),
   blockchain: z.string(),
-  price: z
-    .number({ invalid_type_error: "Price must be a number" })
-    .min(0, "Price cannot be negative"),
   royalties: z
     .number({ invalid_type_error: "Royalties must be a number" })
     .min(0, "Min 0%")

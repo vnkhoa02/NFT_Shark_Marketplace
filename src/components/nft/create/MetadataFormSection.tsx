@@ -103,21 +103,6 @@ export default function MetadataFormSection({ register, setValue, errors }: Prop
           <CardDescription>Set the price & royalties</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* Price */}
-          <div className="grid gap-2">
-            <Label htmlFor="price">Price (ETH)</Label>
-            <Input
-              id="price"
-              type="number"
-              step="0.01"
-              min="0"
-              {...register("price", { valueAsNumber: true })}
-            />
-            {errors.price && (
-              <p className="text-sm text-red-500">{errors.price.message}</p>
-            )}
-          </div>
-
           {/* Royalties */}
           <div className="grid gap-2">
             <Label htmlFor="royalties">Royalties (%)</Label>

@@ -41,7 +41,6 @@ export default function CreateNtf() {
       description: "",
       category: "art",
       blockchain: "ethereum",
-      price: 0,
       royalties: 0,
     },
   });
@@ -62,7 +61,7 @@ export default function CreateNtf() {
     };
     const metadataIpfs = await uploadJSON(metadata);
     if (!metadataIpfs) return;
-    await mintNew(metadataIpfs);
+    mintNew(metadataIpfs);
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
