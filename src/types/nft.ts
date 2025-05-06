@@ -1,4 +1,5 @@
 export interface NFT {
+  contractAddress: string;
   id: string;
   title: string;
   description?: string;
@@ -6,5 +7,5 @@ export interface NFT {
   collection: string;
   price?: string;
   category: string;
-  status: 'owned' | 'listed';
+  status: "owned" | "listed";
 }

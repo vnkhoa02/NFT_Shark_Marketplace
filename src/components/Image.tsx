@@ -1,7 +1,14 @@
 import React from "react";
 import { Img } from "react-image";
+import { Skeleton } from "~/components/ui/skeleton";
 
-const placeholderSrc = "https://picsum.photos/seed/640/425.webp?random,blur";
+function SkeletonCard() {
+  return (
+    <div>
+      <Skeleton className="h-[200px] w-full rounded-lg" />
+    </div>
+  );
+}
 
 interface OptimizedImageProps {
   src: string;
@@ -10,6 +17,7 @@ interface OptimizedImageProps {
   height?: number;
   className?: string;
 }
+
 const OptimizedImage: React.FC<OptimizedImageProps> = ({
   src,
   alt,
@@ -23,7 +31,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
       alt={alt}
       style={{ width, height }}
       className={className}
-      loader={<img src={placeholderSrc} alt="placeholder" />}
+      loader={<SkeletonCard />}
     />
   );
 };

@@ -1,7 +1,8 @@
 import type { WriteContractErrorType } from "@wagmi/core";
 import marketplaceABI from "abi/NFTMarketplace.json";
+import nftAbi from "abi/Shark721NFT.json";
 import { parseEther } from "viem";
-import { useAccount, useWriteContract } from "wagmi";
+import { useAccount, usePublicClient, useWriteContract } from "wagmi";
 import { NFTMP_ADDRESS } from "~/lib/addresses/contract";
 
 interface UseMarketplaceReturn {
@@ -38,6 +39,7 @@ interface UseMarketplaceReturn {
 
 const useMarketplace = (): UseMarketplaceReturn => {
   const { address, isConnected } = useAccount();
+  const publicClient = usePublicClient();
 
   // Prepare "listItem" transaction
   const {
@@ -45,6 +47,7 @@ const useMarketplace = (): UseMarketplaceReturn => {
     isPending: isListing,
     error: listError,
     writeContract: writeList,
+    writeContractAsync,
   } = useWriteContract();
 
   // Prepare "cancelListing" transaction
@@ -55,19 +58,37 @@ const useMarketplace = (): UseMarketplaceReturn => {
     writeContract: writeCancel,
   } = useWriteContract();
 
-  const listingNft = (
+  const listingNft = async (
     nftAddress: string,
     tokenId: string,
-    priceInEth: string,
+    amount: string,
     category = "",
   ) => {
-    if (!isConnected || !address) return;
+    if (!isConnected || !address || !publicClient) return;
+    const approved = await publicClient.readContract({
+      address: nftAddress as `0x${string}`,
+      abi: nftAbi,
+      functionName: "getApproved",
+      args: [tokenId],
+    });
+
+    if (!approved) {
+      console.log("Waiting for approval...", approved);
+      const tx = await writeContractAsync({
+        address: nftAddress as `0x${string}`,
+        abi: nftAbi,
+        functionName: "approve",
+        args: [NFTMP_ADDRESS, tokenId],
+        account: address,
+      });
+      console.log("approved ", tx);
+    }
 
     writeList({
       address: NFTMP_ADDRESS,
       abi: marketplaceABI,
       functionName: "listItem",
-      args: [nftAddress, BigInt(tokenId), parseEther(priceInEth), category],
+      args: [nftAddress, BigInt(tokenId), parseEther(amount), category],
     });
   };
 
