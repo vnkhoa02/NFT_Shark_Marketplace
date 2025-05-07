@@ -17,8 +17,9 @@ import { getTxStatus } from "~/lib/wagmi/utils";
 const maxSize = 10 * 1024 * 1024; // 10MB
 
 export default function CreateNtf() {
+  const [file, setFile] = useState<File>();
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const { setFile, uploadFile, uploadJSON, isUploading } = usePinata();
+  const { uploadFile, uploadJSON, isUploading } = usePinata();
   const {
     isConnected,
     writingContract,
@@ -47,11 +48,11 @@ export default function CreateNtf() {
   });
 
   const onSubmit: SubmitHandler<NftFormValues> = async (data) => {
-    if (isUploading) {
+    if (isUploading || !file) {
       console.error("Data is still uploading");
       return;
     }
-    const ipfsLink = await uploadFile();
+    const ipfsLink = await uploadFile(file);
     const metadata = {
       ...data,
       image: ipfsLink,

@@ -1,8 +1,8 @@
-import { PinataSDK } from "pinata";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
+// Fetch a short-lived upload JWT from your backend
 async function getUploadJwt(): Promise<string> {
-  const res = await fetch(`/api/jwt`);
+  const res = await fetch(`/api/jwt`, { method: "POST" });
   if (!res.ok) throw new Error("Failed to fetch JWT");
   const { token } = await res.json();
   return token;
@@ -14,45 +14,78 @@ export default function usePinata() {
   const [link, setLink] = useState<string>("");
   const [isUploading, setIsUploading] = useState(false);
 
-  // 1) Load JWT once on mount (or before first upload)
+  // 1) Load JWT once on mount
   useEffect(() => {
     getUploadJwt()
       .then(setJwt)
       .catch((err) => setError(err.message));
   }, []);
 
-  // 2) Re‑instantiate SDK whenever JWT changes
-  const pinata = useMemo(() => {
-    if (!jwt) return null;
-    return new PinataSDK({
-      pinataJwt: jwt,
-      pinataGateway: import.meta.env.VITE_GATEWAY_URL,
-    });
-  }, [jwt]);
-
-  // 3) Upload file helper
+  // 2) Upload file directly to Pinata using JWT
   async function uploadFile(upFile: File): Promise<string> {
-    if (!pinata) throw new Error("JWT not ready");
+    if (!jwt) throw new Error("JWT not ready");
     setIsUploading(true);
     try {
-      const { cid } = await pinata.upload.public.file(upFile);
-      if (!cid) throw new Error("Upload failed");
-      const url = await pinata.gateways.public.convert(cid);
+      const formData = new FormData();
+      formData.append("file", upFile);
+      formData.append("pinataMetadata", JSON.stringify({ name: upFile.name }));
+      formData.append("pinataOptions", JSON.stringify({ cidVersion: 1 }));
+
+      const res = await fetch("https://api.pinata.cloud/pinning/pinFileToIPFS", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+        body: formData,
+      });
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(errText || "Pinata upload failed");
+      }
+      const { IpfsHash } = await res.json();
+      const gateway = import.meta.env.VITE_GATEWAY_URL || "https://gateway.pinata.cloud";
+      const url = `${gateway}/ipfs/${IpfsHash}`;
       setLink(url);
       return url;
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError(String(err));
+      }
+      return "";
     } finally {
       setIsUploading(false);
     }
   }
 
-  // 4) Upload JSON helper
+  // 3) Upload JSON directly to Pinata using JWT
   async function uploadJSON(obj: object): Promise<string> {
-    if (!pinata) throw new Error("JWT not ready");
+    if (!jwt) throw new Error("JWT not ready");
     setIsUploading(true);
     try {
-      const { cid } = await pinata.upload.public.json(obj);
-      if (!cid) throw new Error("Upload failed");
-      return await pinata.gateways.public.convert(cid);
+      const res = await fetch("https://api.pinata.cloud/pinning/pinJSONToIPFS", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwt}`,
+        },
+        body: JSON.stringify(obj),
+      });
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(errText || "JSON upload failed");
+      }
+      const { IpfsHash } = await res.json();
+      const gateway = import.meta.env.VITE_GATEWAY_URL || "https://gateway.pinata.cloud";
+      return `${gateway}/ipfs/${IpfsHash}`;
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError(String(err));
+      }
+      return "";
     } finally {
       setIsUploading(false);
     }
@@ -64,5 +97,6 @@ export default function usePinata() {
     isUploading,
     uploadFile,
     uploadJSON,
+    setLink,
   };
 }

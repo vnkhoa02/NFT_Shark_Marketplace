@@ -99,8 +99,7 @@ export default function MetadataFormSection({ register, setValue, errors }: Prop
 
       <Card>
         <CardHeader>
-          <CardTitle>Pricing</CardTitle>
-          <CardDescription>Set the price & royalties</CardDescription>
+          <CardTitle>Others</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Royalties */}
@@ -109,6 +108,8 @@ export default function MetadataFormSection({ register, setValue, errors }: Prop
             <Input
               id="royalties"
               type="number"
+              min="0"
+              max="100"
               {...register("royalties", { valueAsNumber: true })}
             />
             {errors.royalties && (
