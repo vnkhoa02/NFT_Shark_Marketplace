@@ -12,10 +12,10 @@ export function parseEtherToReadable(amount: unknown): string {
     return "0";
   }
 }
-export const getTxStatus = async (hash: `0x${string}`) => {
+export const getTxStatus = async (hash: `0x${string}`, confirmations = 1) => {
   if (!hash) return;
   const receipt = await waitForTransactionReceipt(config, {
-    confirmations: 2,
+    confirmations,
     hash,
   });
   return receipt.status;

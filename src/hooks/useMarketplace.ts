@@ -4,7 +4,7 @@ import { useState } from "react";
 import { parseEther, zeroAddress } from "viem";
 import { useAccount, usePublicClient, useWriteContract } from "wagmi";
 import { NFTMP_ADDRESS } from "~/lib/addresses/contract";
-import { sleep } from "~/lib/utils/sleep";
+import { getTxStatus } from "~/lib/wagmi/utils";
 
 const useMarketplace = () => {
   const { address, isConnected } = useAccount();
@@ -43,17 +43,17 @@ const useMarketplace = () => {
     });
 
     if (!approved || approved == zeroAddress) {
-      console.log("Waiting for approval...", approved);
-      await writeContractAsync({
+      console.log("Waiting for approval...");
+      const tx = await writeContractAsync({
         address: nftAddress as `0x${string}`,
         abi: nftAbi,
         functionName: "approve",
         args: [NFTMP_ADDRESS, tokenId],
         account: address,
       });
-      await sleep(1000);
+      const status = await getTxStatus(tx);
+      if (status != "success") return;
     }
-    console.log("approved ", approved);
     writeList({
       address: NFTMP_ADDRESS,
       abi: marketplaceABI,

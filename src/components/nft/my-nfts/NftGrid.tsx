@@ -45,7 +45,7 @@ export function NftGrid({ nfts, handleListNFT, handleCancelListNFT }: IProps) {
       {nfts.map((nft) => (
         <Card key={nft.id} className="overflow-hidden transition-all hover:shadow-lg">
           <CardHeader className="p-0">
-            <div className="relative">
+            <div className="relative aspect-square">
               <Image
                 src={nft.image || "/placeholder.svg"}
                 alt={nft.title}

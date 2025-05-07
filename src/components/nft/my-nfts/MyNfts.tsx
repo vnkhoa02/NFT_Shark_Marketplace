@@ -12,7 +12,7 @@ import MyNftLoading from "./MyNftLoading";
 import { NftGrid } from "./NftGrid";
 
 export default function MyNFTs() {
-  const [activeTab, setActiveTab] = useState<"all" | "owned" | "listed">("all");
+  const [activeTab, setActiveTab] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedNFT, setSelectedNFT] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -82,7 +82,7 @@ export default function MyNFTs() {
       </div>
 
       {/* Tabs */}
-      <Tabs value={activeTab} onValueChange={() => setActiveTab} className="mb-8">
+      <Tabs value={activeTab} onValueChange={(val) => setActiveTab(val)} className="mb-8">
         <TabsList>
           {["all", "owned", "listed"].map((tab) => (
             <TabsTrigger key={tab} value={tab}>
