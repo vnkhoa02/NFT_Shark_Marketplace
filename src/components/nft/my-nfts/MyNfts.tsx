@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Search } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
@@ -12,38 +12,51 @@ import MyNftLoading from "./MyNftLoading";
 import { NftGrid } from "./NftGrid";
 
 export default function MyNFTs() {
-  const [activeTab, setActiveTab] = useState("all");
+  const [activeTab, setActiveTab] = useState<"all" | "owned" | "listed">("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedNFT, setSelectedNFT] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [cancelListDialogOpen, setCancelListDialogOpen] = useState(false);
+  const [cancelOpen, setCancelOpen] = useState(false);
 
-  const { nfts, loading } = useMyNft(); // owned NFTs
-  const { listedNfts, isMPFetching } = useListedNft(); // listed NFTs
-
-  const handleListClick = (id: string) => {
+  const { nfts, loading } = useMyNft(); // owned
+  const { listedNfts, isMPFetching } = useListedNft(); // listed
+  const handleListClick = useCallback((id: string) => {
     setSelectedNFT(id);
     setDialogOpen(true);
-  };
+  }, []);
 
-  const handleCancelListing = (id: string) => {
+  const handleCancelClick = useCallback((id: string) => {
     setSelectedNFT(id);
-    setCancelListDialogOpen(true);
-  };
+    setCancelOpen(true);
+  }, []);
 
-  const filterBySearch = (list: typeof nfts) =>
-    list.filter(
-      (n) =>
-        !searchQuery ||
-        n.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        n.collection.toLowerCase().includes(searchQuery.toLowerCase()),
-    );
+  const filterBySearch = useCallback(
+    (list: typeof nfts | typeof listedNfts) =>
+      list.filter(
+        (n) =>
+          !searchQuery ||
+          n.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          n.collection.toLowerCase().includes(searchQuery.toLowerCase()),
+      ),
+    [searchQuery],
+  );
+
+  // 3) Memoize each tab’s data
+  const ownedFiltered = useMemo(() => filterBySearch(nfts), [nfts, filterBySearch]);
+  const listedFiltered = useMemo(
+    () => filterBySearch(listedNfts),
+    [listedNfts, filterBySearch],
+  );
+  const allFiltered = useMemo(
+    () => [...ownedFiltered, ...listedFiltered],
+    [ownedFiltered, listedFiltered],
+  );
 
   if (loading || isMPFetching) return <MyNftLoading />;
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Header & Actions */}
+      {/* Header */}
       <div className="mb-8 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
         <div>
           <h1 className="text-3xl font-bold">My NFTs</h1>
@@ -55,8 +68,8 @@ export default function MyNFTs() {
       </div>
 
       {/* Search */}
-      <div className="mb-8 flex flex-col gap-4 md:flex-row">
-        <div className="relative flex-1">
+      <div className="mb-8">
+        <div className="relative w-full md:w-1/2">
           <Search className="text-muted-foreground absolute top-2.5 left-2.5 h-4 w-4" />
           <Input
             type="search"
@@ -69,7 +82,7 @@ export default function MyNFTs() {
       </div>
 
       {/* Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
+      <Tabs value={activeTab} onValueChange={() => setActiveTab} className="mb-8">
         <TabsList>
           {["all", "owned", "listed"].map((tab) => (
             <TabsTrigger key={tab} value={tab}>
@@ -80,27 +93,28 @@ export default function MyNFTs() {
 
         <TabsContent value="all" className="mt-6">
           <NftGrid
-            nfts={filterBySearch([...nfts, ...listedNfts])}
+            nfts={allFiltered}
             handleListNFT={handleListClick}
-            handleCancelListNFT={handleCancelListing}
+            handleCancelListNFT={handleCancelClick}
           />
         </TabsContent>
         <TabsContent value="owned" className="mt-6">
           <NftGrid
-            nfts={filterBySearch(nfts)}
+            nfts={ownedFiltered}
             handleListNFT={handleListClick}
-            handleCancelListNFT={handleCancelListing}
+            handleCancelListNFT={handleCancelClick}
           />
         </TabsContent>
         <TabsContent value="listed" className="mt-6">
           <NftGrid
-            nfts={filterBySearch(listedNfts)}
+            nfts={listedFiltered}
             handleListNFT={handleListClick}
-            handleCancelListNFT={handleCancelListing}
+            handleCancelListNFT={handleCancelClick}
           />
         </TabsContent>
       </Tabs>
 
+      {/* Dialogs */}
       <ListingDialog
         nfts={nfts}
         open={dialogOpen}
@@ -109,8 +123,8 @@ export default function MyNFTs() {
       />
       <CancelListingDialog
         nfts={listedNfts}
-        open={cancelListDialogOpen}
-        onClose={() => setCancelListDialogOpen(false)}
+        open={cancelOpen}
+        onClose={() => setCancelOpen(false)}
         tokenId={selectedNFT}
       />
     </div>
