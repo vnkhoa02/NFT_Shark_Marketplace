@@ -16,8 +16,9 @@ import { NFT } from "~/types/nft";
 interface IProps {
   nfts: NFT[];
   handleListNFT: (id: string) => void;
+  handleCancelListNFT: (id: string) => void;
 }
-export function NftGrid({ nfts, handleListNFT }: IProps) {
+export function NftGrid({ nfts, handleListNFT, handleCancelListNFT }: IProps) {
   if (nfts.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-md border p-12 text-center">
@@ -81,7 +82,10 @@ export function NftGrid({ nfts, handleListNFT }: IProps) {
                     </DropdownMenuItem>
                   )}
                   {nft.status === "listed" && (
-                    <DropdownMenuItem className="text-destructive cursor-pointer">
+                    <DropdownMenuItem
+                      className="text-destructive cursor-pointer"
+                      onClick={() => handleCancelListNFT(nft.id)}
+                    >
                       <Trash2 className="mr-2 h-4 w-4" />
                       Cancel Listing
                     </DropdownMenuItem>

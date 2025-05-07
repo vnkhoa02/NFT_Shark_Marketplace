@@ -6,6 +6,7 @@ import { Input } from "~/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import useMarketplaceSearch from "~/hooks/useMarketplaceSearch";
 import useMyNft from "~/hooks/useMyNft";
+import CancelListingDialog from "./CancelListingDialog";
 import ListingDialog from "./ListingDialog";
 import MyNftLoading from "./MyNftLoading";
 import { NftGrid } from "./NftGrid";
@@ -15,6 +16,7 @@ export default function MyNFTs() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedNFT, setSelectedNFT] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [cancelListDialogOpen, setCancelListDialogOpen] = useState(false);
 
   const { nfts, loading } = useMyNft(); // owned NFTs
   const { listedNfts, isMPFetching } = useMarketplaceSearch(); // listed NFTs
@@ -22,6 +24,11 @@ export default function MyNFTs() {
   const handleListClick = (id: string) => {
     setSelectedNFT(id);
     setDialogOpen(true);
+  };
+
+  const handleCancelListing = (id: string) => {
+    setSelectedNFT(id);
+    setCancelListDialogOpen(true);
   };
 
   const filterBySearch = (list: typeof nfts) =>
@@ -75,20 +82,35 @@ export default function MyNFTs() {
           <NftGrid
             nfts={filterBySearch([...nfts, ...listedNfts])}
             handleListNFT={handleListClick}
+            handleCancelListNFT={handleCancelListing}
           />
         </TabsContent>
         <TabsContent value="owned" className="mt-6">
-          <NftGrid nfts={filterBySearch(nfts)} handleListNFT={handleListClick} />
+          <NftGrid
+            nfts={filterBySearch(nfts)}
+            handleListNFT={handleListClick}
+            handleCancelListNFT={handleCancelListing}
+          />
         </TabsContent>
         <TabsContent value="listed" className="mt-6">
-          <NftGrid nfts={filterBySearch(listedNfts)} handleListNFT={handleListClick} />
+          <NftGrid
+            nfts={filterBySearch(listedNfts)}
+            handleListNFT={handleListClick}
+            handleCancelListNFT={handleCancelListing}
+          />
         </TabsContent>
       </Tabs>
 
-      {/* Listing Dialog */}
       <ListingDialog
+        nfts={nfts}
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
+        tokenId={selectedNFT}
+      />
+      <CancelListingDialog
+        nfts={listedNfts}
+        open={cancelListDialogOpen}
+        onClose={() => setCancelListDialogOpen(false)}
         tokenId={selectedNFT}
       />
     </div>

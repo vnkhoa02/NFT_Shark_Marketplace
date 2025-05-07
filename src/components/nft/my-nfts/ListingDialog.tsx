@@ -12,25 +12,31 @@ import {
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import useMarketplace from "~/hooks/useMarketplace";
-import useMyNft from "~/hooks/useMyNft";
 import { getTxStatus } from "~/lib/wagmi/utils";
+import { NFT } from "~/types/nft";
 
 interface ListingDialogProps {
+  nfts: NFT[];
   open: boolean;
   onClose: () => void;
   tokenId: string | null;
 }
 
-export default function ListingDialog({ open, onClose, tokenId }: ListingDialogProps) {
+export default function ListingDialog({
+  nfts,
+  open,
+  onClose,
+  tokenId,
+}: ListingDialogProps) {
   const [price, setPrice] = useState("");
   const { listingNft, waitForReceipt, setWaitForReceipt, listHash, isListing } =
     useMarketplace();
-  const { fetchNftById } = useMyNft();
 
   const handleSubmit = async () => {
     if (!tokenId || !price) return;
     if (parseFloat(price) < 0.001) return;
-    const ntf = await fetchNftById(tokenId);
+    const ntf = nfts.find((l) => l.id === tokenId);
+    if (!ntf) return;
     listingNft(ntf.contractAddress, tokenId, price, ntf.category);
     onClose();
   };
