@@ -78,7 +78,7 @@ export default function usePinata() {
       }
       const { IpfsHash } = await res.json();
       const gateway = import.meta.env.VITE_GATEWAY_URL || "https://gateway.pinata.cloud";
-      return `${gateway}/ipfs/${IpfsHash}`;
+      return `https://${gateway}/ipfs/${IpfsHash}`;
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
