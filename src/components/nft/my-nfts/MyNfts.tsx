@@ -4,8 +4,8 @@ import { useCallback, useMemo, useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import useAlchemyNft from "~/hooks/useAlchemyNft";
 import useListedNft from "~/hooks/useListedNft";
-import useMyNft from "~/hooks/useMyNft";
 import CancelListingDialog from "./CancelListingDialog";
 import ListingDialog from "./ListingDialog";
 import MyNftLoading from "./MyNftLoading";
@@ -18,8 +18,9 @@ export default function MyNFTs() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [cancelOpen, setCancelOpen] = useState(false);
 
-  const { nfts, loading } = useMyNft(); // owned
+  const { nfts, loading } = useAlchemyNft();
   const { listedNfts, isMPFetching } = useListedNft(); // listed
+
   const handleListClick = useCallback((id: string) => {
     setSelectedNFT(id);
     setDialogOpen(true);
