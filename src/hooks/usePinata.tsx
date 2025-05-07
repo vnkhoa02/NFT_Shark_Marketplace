@@ -44,7 +44,7 @@ export default function usePinata() {
       }
       const { IpfsHash } = await res.json();
       const gateway = import.meta.env.VITE_GATEWAY_URL || "https://gateway.pinata.cloud";
-      const url = `${gateway}/ipfs/${IpfsHash}`;
+      const url = `https://${gateway}/ipfs/${IpfsHash}`;
       setLink(url);
       return url;
     } catch (err) {
