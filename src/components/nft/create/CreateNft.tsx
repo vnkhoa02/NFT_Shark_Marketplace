@@ -12,6 +12,7 @@ import { Button } from "~/components/ui/button";
 import { NftFormValues, NftSchema } from "~/form/NtfForm";
 import useNft from "~/hooks/useNft";
 import usePinata from "~/hooks/usePinata";
+import { getTxStatus } from "~/lib/wagmi/utils";
 
 const maxSize = 10 * 1024 * 1024; // 10MB
 
@@ -20,11 +21,11 @@ export default function CreateNtf() {
   const { setFile, uploadFile, uploadJSON, isUploading } = usePinata();
   const {
     isConnected,
-    waitForReceipt,
     writingContract,
+    waitForReceipt,
     writeHash,
     mintNew,
-    getTxStatus,
+    setWaitForReceipt,
   } = useNft();
 
   const {
@@ -89,14 +90,17 @@ export default function CreateNtf() {
         </a>
       ),
     });
-    getTxStatus().then((status) => {
-      if (status === "success") {
-        toast.success("NFT minted! 🎉");
-      } else {
-        toast.error("Mint failed 😢");
-      }
-    });
-  }, [getTxStatus, writeHash]);
+    setWaitForReceipt(true);
+    getTxStatus(writeHash)
+      .then((status) => {
+        if (status === "success") {
+          toast.success("NFT minted! 🎉");
+        } else {
+          toast.error("Mint failed 😢");
+        }
+      })
+      .finally(() => setWaitForReceipt(false));
+  }, [setWaitForReceipt, writeHash]);
 
   if (!isConnected) return null;
 

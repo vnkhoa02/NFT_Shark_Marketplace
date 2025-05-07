@@ -1,4 +1,6 @@
+import { waitForTransactionReceipt } from "@wagmi/core";
 import { formatEther } from "viem";
+import { config } from "~/lib/wagmi/config";
 
 export function parseEtherToReadable(amount: unknown): string {
   try {
@@ -10,3 +12,11 @@ export function parseEtherToReadable(amount: unknown): string {
     return "0";
   }
 }
+export const getTxStatus = async (hash: `0x${string}`) => {
+  if (!hash) return;
+  const receipt = await waitForTransactionReceipt(config, {
+    confirmations: 2,
+    hash,
+  });
+  return receipt.status;
+};

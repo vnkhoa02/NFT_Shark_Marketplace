@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -12,6 +13,7 @@ import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import useMarketplace from "~/hooks/useMarketplace";
 import useMyNft from "~/hooks/useMyNft";
+import { getTxStatus } from "~/lib/wagmi/utils";
 
 interface ListingDialogProps {
   open: boolean;
@@ -21,7 +23,8 @@ interface ListingDialogProps {
 
 export default function ListingDialog({ open, onClose, tokenId }: ListingDialogProps) {
   const [price, setPrice] = useState("");
-  const { listingNft, isListing } = useMarketplace();
+  const { listingNft, waitForReceipt, setWaitForReceipt, listHash, isListing } =
+    useMarketplace();
   const { fetchNftById } = useMyNft();
 
   const handleSubmit = async () => {
@@ -31,6 +34,32 @@ export default function ListingDialog({ open, onClose, tokenId }: ListingDialogP
     listingNft(ntf.contractAddress, tokenId, price, ntf.category);
     onClose();
   };
+
+  useEffect(() => {
+    if (!listHash) return;
+    toast.info("Track your Transaction!", {
+      description: (
+        <a
+          href={`https://sepolia.etherscan.io/tx/${listHash}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-black underline"
+        >
+          View on Etherscan
+        </a>
+      ),
+    });
+    setWaitForReceipt(true);
+    getTxStatus(listHash)
+      .then((status) => {
+        if (status === "success") {
+          toast.success("NFT Listed! 🎉");
+        } else {
+          toast.error("NFT List failed 😢");
+        }
+      })
+      .finally(() => setWaitForReceipt(false));
+  }, [listHash, setWaitForReceipt]);
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -57,8 +86,8 @@ export default function ListingDialog({ open, onClose, tokenId }: ListingDialogP
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <Button onClick={handleSubmit} disabled={!price || isListing}>
-            {isListing ? "Listing..." : "List for Sale"}
+          <Button onClick={handleSubmit} disabled={!price || isListing || waitForReceipt}>
+            {isListing || waitForReceipt ? "Listing..." : "List for Sale"}
           </Button>
         </DialogFooter>
       </DialogContent>

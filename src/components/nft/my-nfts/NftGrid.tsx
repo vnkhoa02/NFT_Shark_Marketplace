@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowUpDown, Eye, MoreHorizontal, Tag, Trash2 } from "lucide-react";
+import { Eye, MoreHorizontal, Tag, Trash2 } from "lucide-react";
 import Image from "~/components/Image";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
@@ -8,7 +8,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { parseEtherToReadable } from "~/lib/wagmi/utils";
@@ -81,11 +80,6 @@ export function NftGrid({ nfts, handleListNFT }: IProps) {
                       List for Sale
                     </DropdownMenuItem>
                   )}
-                  <DropdownMenuItem className="cursor-pointer">
-                    <ArrowUpDown className="mr-2 h-4 w-4" />
-                    Transfer
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
                   {nft.status === "listed" && (
                     <DropdownMenuItem className="text-destructive cursor-pointer">
                       <Trash2 className="mr-2 h-4 w-4" />
@@ -97,7 +91,7 @@ export function NftGrid({ nfts, handleListNFT }: IProps) {
             </div>
             <div className="text-muted-foreground mt-2 text-sm">{nft.collection}</div>
           </CardContent>
-          <CardFooter className="flex items-center justify-between p-4 pt-0">
+          <CardFooter className="flex items-center justify-end px-4">
             <Link
               to={`/nft/$id`}
               params={{
