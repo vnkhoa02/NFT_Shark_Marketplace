@@ -1,7 +1,6 @@
 import sharkNftAbi from "abi/Shark721NFT.json";
 import { useState } from "react";
-import { useAccount, useReadContract, useWriteContract } from "wagmi";
-import { SHARK_721_ADDRESS } from "~/lib/addresses/contract";
+import { useAccount, useWriteContract } from "wagmi";
 
 export default function useNft() {
   const { address, isConnected } = useAccount();
@@ -14,27 +13,11 @@ export default function useNft() {
     writeContract,
   } = useWriteContract();
 
-  // ========== READ FUNCTIONS ==========
-
-  const { data: name } = useReadContract({
-    address: SHARK_721_ADDRESS,
-    abi: sharkNftAbi,
-    functionName: "name",
-  });
-
-  const { data: symbol } = useReadContract({
-    address: SHARK_721_ADDRESS,
-    abi: sharkNftAbi,
-    functionName: "symbol",
-  });
-
-  // ========== WRITE FUNCTIONS ==========
-
-  const mintNew = (tokenURI: string) => {
+  const mintNew = (tokenURI: string, contractAddress: `0x${string}`) => {
     if (!address || !tokenURI) return;
     writeContract({
-      address: SHARK_721_ADDRESS,
-      abi: sharkNftAbi,
+      address: contractAddress,
+      abi: sharkNftAbi.abi,
       functionName: "mintNew",
       args: [address, tokenURI],
       value: 0n,
@@ -43,8 +26,6 @@ export default function useNft() {
 
   return {
     isConnected,
-    name,
-    symbol,
     mintNew,
     setWaitForReceipt,
     error,

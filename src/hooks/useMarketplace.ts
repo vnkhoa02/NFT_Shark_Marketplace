@@ -37,7 +37,7 @@ const useMarketplace = () => {
     if (!isConnected || !address || !publicClient) return;
     const approved = await publicClient.readContract({
       address: nftAddress as `0x${string}`,
-      abi: nftAbi,
+      abi: nftAbi.abi,
       functionName: "getApproved",
       args: [tokenId],
     });
@@ -46,7 +46,7 @@ const useMarketplace = () => {
       console.log("Waiting for approval...");
       const tx = await writeContractAsync({
         address: nftAddress as `0x${string}`,
-        abi: nftAbi,
+        abi: nftAbi.abi,
         functionName: "approve",
         args: [NFTMP_ADDRESS, tokenId],
         account: address,

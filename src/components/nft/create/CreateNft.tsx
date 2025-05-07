@@ -16,7 +16,10 @@ import { getTxStatus } from "~/lib/wagmi/utils";
 
 const maxSize = 10 * 1024 * 1024; // 10MB
 
-export default function CreateNtf() {
+interface IProps {
+  contractAddress: `0x${string}`;
+}
+export default function CreateNtf({ contractAddress }: IProps) {
   const [file, setFile] = useState<File>();
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const { uploadFile, uploadJSON, isUploading } = usePinata();
@@ -63,7 +66,7 @@ export default function CreateNtf() {
     };
     const metadataIpfs = await uploadJSON(metadata);
     if (!metadataIpfs) return;
-    mintNew(metadataIpfs);
+    mintNew(metadataIpfs, contractAddress);
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
