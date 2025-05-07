@@ -1,5 +1,5 @@
 export interface NFT {
-  contractAddress: string;
+  contractAddress: `0x${string}`;
   id: string;
   title: string;
   description?: string;
@@ -10,9 +10,15 @@ export interface NFT {
   status: "owned" | "listed";
 }
 
-export interface ItemListedEvent {
-  nft: string;
+export interface ItemListedArgs {
+  nft: `0x${string}`;
   tokenId: string;
   price: bigint;
   category: string;
+}
+
+export interface ItemCanceledArgs {
+  nft: string;
+  tokenId: string;
+  seller: `0x${string}`;
 }

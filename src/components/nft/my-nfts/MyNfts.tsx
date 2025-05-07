@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import useMarketplaceSearch from "~/hooks/useMarketplaceSearch";
+import useListedNft from "~/hooks/useListedNft";
 import useMyNft from "~/hooks/useMyNft";
 import CancelListingDialog from "./CancelListingDialog";
 import ListingDialog from "./ListingDialog";
@@ -19,7 +19,7 @@ export default function MyNFTs() {
   const [cancelListDialogOpen, setCancelListDialogOpen] = useState(false);
 
   const { nfts, loading } = useMyNft(); // owned NFTs
-  const { listedNfts, isMPFetching } = useMarketplaceSearch(); // listed NFTs
+  const { listedNfts, isMPFetching } = useListedNft(); // listed NFTs
 
   const handleListClick = (id: string) => {
     setSelectedNFT(id);

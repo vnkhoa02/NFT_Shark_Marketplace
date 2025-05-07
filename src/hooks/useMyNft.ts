@@ -13,6 +13,7 @@ export default function useMyNft() {
     isLoading: loading,
     isError,
     error,
+    refetch: getUserNFTs,
   } = useQuery({
     queryKey: ["myNFTs", address],
     queryFn: () => fetchMyNFTs(address!),
@@ -91,5 +92,6 @@ export default function useMyNft() {
     isError,
     error,
     fetchNftById,
+    getUserNFTs,
   };
 }
