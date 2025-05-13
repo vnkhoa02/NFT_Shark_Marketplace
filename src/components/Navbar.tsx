@@ -160,11 +160,6 @@ export function Navbar() {
                 </Link>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <Link to="/betting">
-                  <div className={navigationMenuTriggerStyle()}>Sports Betting</div>
-                </Link>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
                 <NavigationMenuTrigger>Explore</NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <ul className="grid w-[400px] grid-cols-2 gap-3 p-4 md:w-[500px] lg:w-[600px]">

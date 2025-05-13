@@ -1,11 +1,13 @@
 import { Link } from "@tanstack/react-router";
 import { Button } from "~/components/ui/button";
+import { WavyBackground } from "../ui/wavy-background";
 
 export function HeroSection() {
   return (
     <section className="relative">
-      <div className="absolute inset-0 bg-gradient-to-r from-cyan-900 to-blue-900" />
-      <div className="absolute inset-0 bg-[url('/placeholder.svg?height=600&width=1200')] bg-cover bg-center opacity-20" />
+      <div className="absolute inset-0 -mt-10">
+        <WavyBackground />
+      </div>
       <div className="relative container mx-auto px-4 py-24 text-center md:py-32">
         <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl md:text-6xl">
           NFT Shark

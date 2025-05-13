@@ -15,10 +15,10 @@ export function TrendingCollections() {
       floorPrice: "5.5 ETH",
       volume: "1.2K ETH",
       images: [
-        "/placeholder.svg?height=100&width=100",
-        "/placeholder.svg?height=100&width=100",
-        "/placeholder.svg?height=100&width=100",
-        "/placeholder.svg?height=100&width=100",
+        "https://i2.seadn.io/ethereum/0xb47e3cd837ddf8e4c57f05d70ab865de6e193bbb/e120d5fb72ddc5691f08d8a2ec3b61/fde120d5fb72ddc5691f08d8a2ec3b61.png?w=100",
+        "https://i2.seadn.io/ethereum/0xb47e3cd837ddf8e4c57f05d70ab865de6e193bbb/5770e6107d7b5c22e3fa2251ea089a/945770e6107d7b5c22e3fa2251ea089a.png?w=100",
+        "https://i2.seadn.io/ethereum/0xb47e3cd837ddf8e4c57f05d70ab865de6e193bbb/4dcc01fad5bc2b7399a4ee29a046ea/fe4dcc01fad5bc2b7399a4ee29a046ea.png?w=100",
+        "https://i2.seadn.io/ethereum/0xb47e3cd837ddf8e4c57f05d70ab865de6e193bbb/28624a57bea7619b9962ccc5b1def0/2528624a57bea7619b9962ccc5b1def0.png?w=100",
       ],
     },
     {
@@ -30,10 +30,10 @@ export function TrendingCollections() {
       floorPrice: "2.2 ETH",
       volume: "850 ETH",
       images: [
-        "/placeholder.svg?height=100&width=100",
-        "/placeholder.svg?height=100&width=100",
-        "/placeholder.svg?height=100&width=100",
-        "/placeholder.svg?height=100&width=100",
+        "https://i2.seadn.io/ethereum/0x59ec8e68d9caa87f6b5bc4013172c20e85ccdad0/a4690070884d0cf600c769846750044d.png?w=100",
+        "https://i2.seadn.io/ethereum/0x59ec8e68d9caa87f6b5bc4013172c20e85ccdad0/7fd20124cfafc379445d22414272c99d.png?w=100",
+        "https://i2.seadn.io/ethereum/0x59ec8e68d9caa87f6b5bc4013172c20e85ccdad0/88cf5665f305d36127b9e959e55bbea1.png?w=100",
+        "https://i2.seadn.io/ethereum/0x59ec8e68d9caa87f6b5bc4013172c20e85ccdad0/bf07242b27493d8a568229342d959e3b.png?w=100",
       ],
     },
     {
@@ -45,10 +45,10 @@ export function TrendingCollections() {
       floorPrice: "1.8 ETH",
       volume: "620 ETH",
       images: [
-        "/placeholder.svg?height=100&width=100",
-        "/placeholder.svg?height=100&width=100",
-        "/placeholder.svg?height=100&width=100",
-        "/placeholder.svg?height=100&width=100",
+        "https://i2.seadn.io/base/0x7e72abdf47bd21bf0ed6ea8cb8dad60579f3fb50/234ff10c72edef5045e35903d3c361/7b234ff10c72edef5045e35903d3c361.png?w=100",
+        "https://i2.seadn.io/base/0x7e72abdf47bd21bf0ed6ea8cb8dad60579f3fb50/9942fd4f4a6a0c3bb56da2c58674a1/179942fd4f4a6a0c3bb56da2c58674a1.png?w=100",
+        "https://i2.seadn.io/base/0x7e72abdf47bd21bf0ed6ea8cb8dad60579f3fb50/9db291388f9d12dd1f139ff9553bf1/5c9db291388f9d12dd1f139ff9553bf1.png?w=100",
+        "https://i2.seadn.io/base/0x7e72abdf47bd21bf0ed6ea8cb8dad60579f3fb50/066f9853e4ea0a1e3a3401332a18ab/e4066f9853e4ea0a1e3a3401332a18ab.png?w=100",
       ],
     },
   ];
