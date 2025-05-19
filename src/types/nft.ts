@@ -6,7 +6,7 @@ export interface NFT {
   image: string;
   collection: string;
   price?: string;
-  category: string;
+  category?: string;
   status: "owned" | "listed";
 }
 
