@@ -1,50 +1,15 @@
 import { Link } from "@tanstack/react-router";
 import { Search } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
+import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import useAlchemyNft from "~/hooks/useAlchemyNft";
-import CancelListingDialog from "./CancelListingDialog";
-import ListingDialog from "./ListingDialog";
-import MyNftLoading from "./MyNftLoading";
-import { NftGrid } from "./NftGrid";
+import { default as ListedNfts, default as MyListedNfts } from "./ListedNfts";
+import OwnedNfts from "./OwnedNfts";
 
 export default function MyNFTs() {
   const [activeTab, setActiveTab] = useState("owned");
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedNFT, setSelectedNFT] = useState<string | null>(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [cancelOpen, setCancelOpen] = useState(false);
-
-  const { nfts, loading } = useAlchemyNft();
-
-  const handleListClick = useCallback((id: string) => {
-    setSelectedNFT(id);
-    setDialogOpen(true);
-  }, []);
-
-  const handleCancelClick = useCallback((id: string) => {
-    setSelectedNFT(id);
-    setCancelOpen(true);
-  }, []);
-
-  const filterBySearch = useCallback(
-    (list: typeof nfts) =>
-      list.filter(
-        (n) =>
-          !searchQuery ||
-          n.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          n.collection.toLowerCase().includes(searchQuery.toLowerCase()),
-      ),
-    [searchQuery],
-  );
-
-  // 3) Memoize each tab’s data
-  const ownedFiltered = useMemo(() => filterBySearch(nfts), [nfts, filterBySearch]);
-  const listedFiltered = useMemo(() => ownedFiltered, [ownedFiltered]);
-
-  if (loading) return <MyNftLoading />;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -78,39 +43,18 @@ export default function MyNFTs() {
         <TabsList>
           {["owned", "listed"].map((tab) => (
             <TabsTrigger key={tab} value={tab}>
-              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              <p className="capitalize">{tab}</p>
             </TabsTrigger>
           ))}
         </TabsList>
         <TabsContent value="owned" className="mt-6">
-          <NftGrid
-            nfts={ownedFiltered}
-            handleListNFT={handleListClick}
-            handleCancelListNFT={handleCancelClick}
-          />
+          <OwnedNfts searchQuery={searchQuery} />
         </TabsContent>
         <TabsContent value="listed" className="mt-6">
-          <NftGrid
-            nfts={listedFiltered}
-            handleListNFT={handleListClick}
-            handleCancelListNFT={handleCancelClick}
-          />
+          <ListedNfts searchQuery={searchQuery} />
         </TabsContent>
+        <MyListedNfts />
       </Tabs>
-
-      {/* Dialogs */}
-      <ListingDialog
-        nfts={nfts}
-        open={dialogOpen}
-        onClose={() => setDialogOpen(false)}
-        tokenId={selectedNFT}
-      />
-      <CancelListingDialog
-        nfts={nfts}
-        open={cancelOpen}
-        onClose={() => setCancelOpen(false)}
-        tokenId={selectedNFT}
-      />
     </div>
   );
 }

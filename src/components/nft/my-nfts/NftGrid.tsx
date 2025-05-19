@@ -49,7 +49,7 @@ export function NftGrid({ nfts, handleListNFT, handleCancelListNFT }: IProps) {
               <Image
                 src={nft.image || "/placeholder.svg"}
                 alt={nft.title}
-                className="w-full object-cover"
+                className="w-full object-cover h-full"
               />
               <div className="absolute top-2 right-2 flex gap-1">
                 <Badge className="bg-background/80 text-foreground backdrop-blur-sm">

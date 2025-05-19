@@ -1,10 +1,14 @@
+import { useQuery } from "@tanstack/react-query";
 import marketplaceABI from "abi/NFTMarketplace.json";
 import nftAbi from "abi/Shark721NFT.json";
 import { useState } from "react";
 import { parseEther, zeroAddress } from "viem";
 import { useAccount, usePublicClient, useWriteContract } from "wagmi";
 import { NFTMP_ADDRESS } from "~/lib/addresses/contract";
+import { convertOwnedNftToNFT } from "~/lib/utils/ntf";
 import { getTxStatus } from "~/lib/wagmi/utils";
+import { OwnedNft } from "~/types/alchemy.nft";
+import { NFT } from "~/types/nft";
 
 const useMarketplace = () => {
   const { address, isConnected } = useAccount();
@@ -27,6 +31,25 @@ const useMarketplace = () => {
     error: cancelError,
     writeContract: writeCancel,
   } = useWriteContract();
+
+  const { data: listedNtfs = [], isLoading: isLoadingListedNft } = useQuery({
+    queryKey: ["myListedNFTs", address],
+    queryFn: () => fetchUserListedNFTs(),
+    enabled: !!address,
+    staleTime: 5 * 60 * 1000, // cache for 5 minutes
+    retry: 2,
+  });
+
+  const fetchUserListedNFTs = async (): Promise<NFT[]> => {
+    const response = await fetch(`/api/nfts?owner=${address}&listed=true`).then((res) => {
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      return res.json();
+    });
+    const ownedNfts = response?.ownedNfts as OwnedNft[];
+    return ownedNfts.map((n) => convertOwnedNftToNFT(n));
+  };
 
   const listingNft = async (
     nftAddress: string,
@@ -84,6 +107,8 @@ const useMarketplace = () => {
     cancelHash,
     isCancelling,
     cancelError,
+    listedNtfs,
+    isLoadingListedNft,
   };
 };
 

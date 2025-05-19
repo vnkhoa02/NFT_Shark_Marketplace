@@ -18,16 +18,33 @@ interface FetchNFTsResponse {
   ownedNfts: NFT[];
   [key: string]: unknown; // Extendable for other response properties
 }
-const fetchNFTs = async (
-  owner: string,
-  contractAddress: string | null,
-): Promise<FetchNFTsResponse | undefined> => {
+const fetchNFTs = async (owner: string): Promise<FetchNFTsResponse | undefined> => {
   const chainId = getChainId(config).toString();
   const ENDPOINT = chainId !== "1" ? SEPOLIA_ENDPOINT : MAINNET_ENDPOINT;
 
   try {
     const params = new URLSearchParams({ owner });
-    if (contractAddress) params.append("contractAddresses", contractAddress);
+    const url = `${ENDPOINT}/getNFTs?${params.toString()}`;
+
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data: FetchNFTsResponse = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching NFTs:", error);
+    throw Error;
+  }
+};
+
+const fetchUserListedNFTs = async (owner: string) => {
+  const chainId = getChainId(config).toString();
+  const ENDPOINT = chainId !== "1" ? SEPOLIA_ENDPOINT : MAINNET_ENDPOINT;
+
+  try {
+    const params = new URLSearchParams({ owner });
     const url = `${ENDPOINT}/getNFTs?${params.toString()}`;
 
     const response = await fetch(url);
@@ -56,9 +73,12 @@ export const APIRoute = createAPIFileRoute("/api/nfts")({
           status: 400,
         },
       );
-
-    const contractAddress = url.searchParams.get("contractAddress");
-    const data = await fetchNFTs(owner, contractAddress);
+    const listed = url.searchParams.get("listed");
+    if (listed) {
+      const data = await fetchUserListedNFTs(owner);
+      return json(data);
+    }
+    const data = await fetchNFTs(owner);
     return json(data);
   },
 });
