@@ -5,9 +5,7 @@ import { useState } from "react";
 import { parseEther, zeroAddress } from "viem";
 import { useAccount, usePublicClient, useWriteContract } from "wagmi";
 import { NFTMP_ADDRESS } from "~/lib/addresses/contract";
-import { convertOwnedNftToNFT } from "~/lib/utils/ntf";
 import { getTxStatus } from "~/lib/wagmi/utils";
-import { OwnedNft } from "~/types/alchemy.nft";
 import { NFT } from "~/types/nft";
 
 const useMarketplace = () => {
@@ -41,14 +39,16 @@ const useMarketplace = () => {
   });
 
   const fetchUserListedNFTs = async (): Promise<NFT[]> => {
-    const response = await fetch(`/api/nfts?owner=${address}&listed=true`).then((res) => {
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-      return res.json();
-    });
-    const ownedNfts = response?.ownedNfts as OwnedNft[];
-    return ownedNfts.map((n) => convertOwnedNftToNFT(n));
+    const response = await fetch(`/api/nfts/listed?owner=${address}&listed=true`).then(
+      (res) => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.json();
+      },
+    );
+    const listedNfts = response?.listedNfts;
+    return listedNfts;
   };
 
   const listingNft = async (

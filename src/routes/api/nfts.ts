@@ -39,27 +39,6 @@ const fetchNFTs = async (owner: string): Promise<FetchNFTsResponse | undefined> 
   }
 };
 
-const fetchUserListedNFTs = async (owner: string) => {
-  const chainId = getChainId(config).toString();
-  const ENDPOINT = chainId !== "1" ? SEPOLIA_ENDPOINT : MAINNET_ENDPOINT;
-
-  try {
-    const params = new URLSearchParams({ owner });
-    const url = `${ENDPOINT}/getNFTs?${params.toString()}`;
-
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data: FetchNFTsResponse = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error fetching NFTs:", error);
-    throw Error;
-  }
-};
-
 export const APIRoute = createAPIFileRoute("/api/nfts")({
   GET: async ({ request }) => {
     const url = new URL(request.url);
@@ -73,11 +52,6 @@ export const APIRoute = createAPIFileRoute("/api/nfts")({
           status: 400,
         },
       );
-    const listed = url.searchParams.get("listed");
-    if (listed) {
-      const data = await fetchUserListedNFTs(owner);
-      return json(data);
-    }
     const data = await fetchNFTs(owner);
     return json(data);
   },

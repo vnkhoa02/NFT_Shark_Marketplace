@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Search } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
@@ -10,6 +10,10 @@ import OwnedNfts from "./OwnedNfts";
 export default function MyNFTs() {
   const [activeTab, setActiveTab] = useState("owned");
   const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    if (searchQuery) setSearchQuery("");
+  }, [activeTab]);
 
   return (
     <div className="container mx-auto px-4 py-8">
