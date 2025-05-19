@@ -3,7 +3,7 @@ import marketplaceABI from "abi/NFTMarketplace.json";
 import nftAbi from "abi/Shark721NFT.json";
 import { Nft } from "alchemy-sdk";
 import { useState } from "react";
-import { parseEther, zeroAddress } from "viem";
+import { parseEther } from "viem";
 import { useAccount, usePublicClient, useWriteContract } from "wagmi";
 import { NFTMP_ADDRESS } from "~/lib/addresses/contract";
 import { convertAlchemyNftToNft } from "~/lib/utils/ntf";
@@ -51,26 +51,49 @@ const useMarketplace = () => {
     return listedNfts.map((n) => convertAlchemyNftToNft(n));
   };
 
-  const listingNft = async (nftAddress: string, tokenId: string, amount: string) => {
-    if (!isConnected || !address || !publicClient) return;
+  const checkApproval = async (nftAddress: `0x${string}`, tokenId: string | null) => {
+    if (!isConnected || !tokenId || !publicClient) return false;
     const approved = await publicClient.readContract({
-      address: nftAddress as `0x${string}`,
+      address: nftAddress,
       abi: nftAbi.abi,
       functionName: "getApproved",
       args: [tokenId],
     });
+    return approved == NFTMP_ADDRESS;
+  };
 
-    if (!approved || approved == zeroAddress) {
-      console.log("Waiting for approval...");
-      const tx = await writeContractAsync({
-        address: nftAddress as `0x${string}`,
-        abi: nftAbi.abi,
-        functionName: "approve",
-        args: [NFTMP_ADDRESS, tokenId],
-        account: address,
-      });
-      const status = await getTxStatus(tx);
-      if (status != "success") return;
+  // Todo: fix this
+  const approveNft = async (nftAddress: `0x${string}`) => {
+    if (!isConnected || !publicClient) return false;
+    console.log("Checking approval for NFT marketplace");
+    // If not approved, send transaction to approve
+    const tx = await writeContractAsync({
+      address: nftAddress,
+      abi: nftAbi.abi,
+      functionName: "setApprovalForAll",
+      args: [NFTMP_ADDRESS, true],
+      account: address,
+    });
+    const status = await getTxStatus(tx);
+    if (status === "success") {
+      console.log("All NFTs approved for marketplace");
+      return true;
+    } else {
+      console.log("Approval for all NFTs failed");
+      return false;
+    }
+  };
+
+  const listingNft = async (
+    nftAddress: `0x${string}`,
+    tokenId: string,
+    amount: string,
+  ) => {
+    if (!isConnected || !address || !publicClient) return;
+    const isApproved = await checkApproval(nftAddress, tokenId);
+    if (!isApproved) {
+      console.log("NFT not approved for marketplace");
+      return;
     }
     writeList({
       address: NFTMP_ADDRESS,
@@ -94,6 +117,7 @@ const useMarketplace = () => {
   return {
     listingNft,
     cancelListing,
+    approveNft,
     waitForReceipt,
     setWaitForReceipt,
     listHash,

@@ -59,9 +59,9 @@ async function fetchNFTsForTokenIds(
     );
     nfts.push(...response.nfts);
     pageKey = response.pageKey;
-  } while (pageKey && nfts.length < listedTokenIdSet.size);
+  } while (pageKey);
 
-  return nfts;
+  return nfts.filter((n) => listedTokenIdSet.has(n.tokenId));
 }
 
 const fetchUserListedNFTs = async (owner: string) => {

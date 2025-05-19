@@ -121,12 +121,6 @@ export function Navbar() {
                   Marketplace
                 </Link>
                 <Link
-                  to="/betting"
-                  className="hover:bg-accent rounded-md px-4 py-2 text-sm font-medium"
-                >
-                  Sports Betting
-                </Link>
-                <Link
                   to="/collections"
                   className="hover:bg-accent rounded-md px-4 py-2 text-sm font-medium"
                 >
@@ -174,16 +168,6 @@ export function Navbar() {
                           <div className="text-sm font-medium">Artists</div>
                           <div className="text-muted-foreground text-xs">
                             Discover top NFT creators
-                          </div>
-                        </div>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="/betting/leagues">
-                        <div className="hover:bg-accent block space-y-1 rounded-md p-3">
-                          <div className="text-sm font-medium">Sports Leagues</div>
-                          <div className="text-muted-foreground text-xs">
-                            Bet on major sports leagues
                           </div>
                         </div>
                       </Link>

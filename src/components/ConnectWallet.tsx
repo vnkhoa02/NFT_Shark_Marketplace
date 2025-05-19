@@ -1,4 +1,5 @@
 import { ChevronDown, Wallet } from "lucide-react";
+import { useEffect } from "react";
 import { useAccount, useDisconnect } from "wagmi";
 import { Button } from "~/components/ui/button";
 import {
@@ -17,6 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { useIsMounted } from "~/hooks/useIsMounted";
+import useMarketplace from "~/hooks/useMarketplace";
 import { WalletOptions } from "./web3/WalletOptions";
 
 function Connected({ address }: { address: string }) {
@@ -54,7 +56,12 @@ function Connected({ address }: { address: string }) {
 
 export default function ConnectWallet() {
   const { isConnected, address } = useAccount();
+  const { approveNft } = useMarketplace();
   const isMounted = useIsMounted();
+
+  useEffect(() => {
+    approveNft(address as `0x${string}`);
+  }, [isConnected, address]);
 
   if (!isMounted) return null;
 
