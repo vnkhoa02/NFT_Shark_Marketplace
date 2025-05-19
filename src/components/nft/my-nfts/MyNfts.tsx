@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { default as ListedNfts, default as MyListedNfts } from "./ListedNfts";
+import { default as ListedNfts } from "./ListedNfts";
 import OwnedNfts from "./OwnedNfts";
 
 export default function MyNFTs() {
@@ -57,7 +57,6 @@ export default function MyNFTs() {
         <TabsContent value="listed" className="mt-6">
           <ListedNfts searchQuery={searchQuery} />
         </TabsContent>
-        <MyListedNfts />
       </Tabs>
     </div>
   );

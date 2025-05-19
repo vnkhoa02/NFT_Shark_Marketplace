@@ -1,6 +1,7 @@
 import { json } from "@tanstack/react-start";
 import { createAPIFileRoute } from "@tanstack/react-start/api";
 import { getChainId } from "@wagmi/core";
+import marketplaceABI from "abi/NFTMarketplace.json";
 import { Alchemy, Network, Nft, NftContractNftsResponse } from "alchemy-sdk";
 import { ethers } from "ethers";
 import { NFTMP_ADDRESS, SHARK_721_ADDRESS } from "~/lib/addresses/contract";
@@ -10,10 +11,6 @@ import { config as wagmiConfig } from "~/lib/wagmi/config";
 const API_KEY = process.env.ALCHEMY_API_KEY;
 const MAINNET_ENDPOINT = `https://eth-mainnet.g.alchemy.com/v2/${API_KEY}`;
 const SEPOLIA_ENDPOINT = `https://eth-sepolia.g.alchemy.com/v2/${API_KEY}`;
-
-const MARKETPLACE_ABI = [
-  "function getSellerListings(address seller) external view returns (uint256[] memory)",
-];
 
 // Helper to get Alchemy network from chainId
 function getAlchemyNetwork(chainId: string) {
@@ -38,7 +35,7 @@ async function fetchUserListedTokenIds(
   owner: string,
   provider: ethers.providers.JsonRpcProvider,
 ): Promise<string[]> {
-  const contract = new ethers.Contract(NFTMP_ADDRESS, MARKETPLACE_ABI, provider);
+  const contract = new ethers.Contract(NFTMP_ADDRESS, marketplaceABI, provider);
   const tokenIds: ethers.BigNumberish[] = await contract.getSellerListings(owner);
   return tokenIds.map((id) => id.toString());
 }
@@ -75,11 +72,15 @@ const fetchUserListedNFTs = async (owner: string) => {
 
   // 1. Get token IDs listed by this user
   const tokenIds = await fetchUserListedTokenIds(owner, provider);
-  if (!tokenIds.length) return { ownedNfts: [] };
+  if (!tokenIds.length) return { listedNfts: [] };
 
   // 2. Fetch all NFTs for the collection (with metadata), then filter by tokenIds
   const nfts = await fetchNFTsForTokenIds(alchemy, SHARK_721_ADDRESS, tokenIds);
-
+  nfts.sort((a, b) =>
+    new Date(a.timeLastUpdated).getTime() > new Date(b.timeLastUpdated).getTime()
+      ? 1
+      : -1,
+  );
   return { listedNfts: nfts };
 };
 

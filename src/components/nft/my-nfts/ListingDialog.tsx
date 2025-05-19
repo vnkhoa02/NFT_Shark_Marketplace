@@ -37,7 +37,7 @@ export default function ListingDialog({
     if (parseFloat(price) < 0.001) return;
     const ntf = nfts.find((l) => l.id === tokenId);
     if (!ntf) return;
-    listingNft(ntf.contractAddress, tokenId, price, ntf.category);
+    listingNft(ntf.contractAddress, tokenId, price);
     onClose();
   };
 

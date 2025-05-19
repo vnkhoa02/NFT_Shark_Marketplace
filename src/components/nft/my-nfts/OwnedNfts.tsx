@@ -15,7 +15,7 @@ export default function OwnedNfts({ searchQuery }: OwnedNftsProps) {
   const { nfts, loading } = useAlchemyNft();
 
   const filteredNfts = nfts.filter((nft) =>
-    nft.title.toLowerCase().includes(searchQuery?.toLowerCase() || ""),
+    nft?.title?.toLowerCase().includes(searchQuery?.toLowerCase() || ""),
   );
 
   const handleListClick = useCallback((id: string) => {

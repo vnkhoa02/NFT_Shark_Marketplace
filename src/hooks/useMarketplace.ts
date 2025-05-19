@@ -1,10 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import marketplaceABI from "abi/NFTMarketplace.json";
 import nftAbi from "abi/Shark721NFT.json";
+import { Nft } from "alchemy-sdk";
 import { useState } from "react";
 import { parseEther, zeroAddress } from "viem";
 import { useAccount, usePublicClient, useWriteContract } from "wagmi";
 import { NFTMP_ADDRESS } from "~/lib/addresses/contract";
+import { convertAlchemyNftToNft } from "~/lib/utils/ntf";
 import { getTxStatus } from "~/lib/wagmi/utils";
 import { NFT } from "~/types/nft";
 
@@ -32,31 +34,24 @@ const useMarketplace = () => {
 
   const { data: listedNtfs = [], isLoading: isLoadingListedNft } = useQuery({
     queryKey: ["myListedNFTs", address],
-    queryFn: () => fetchUserListedNFTs(),
+    queryFn: () => fetchUserListedNFTs(address!),
     enabled: !!address,
     staleTime: 5 * 60 * 1000, // cache for 5 minutes
     retry: 2,
   });
 
-  const fetchUserListedNFTs = async (): Promise<NFT[]> => {
-    const response = await fetch(`/api/nfts/listed?owner=${address}&listed=true`).then(
-      (res) => {
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-        return res.json();
-      },
-    );
-    const listedNfts = response?.listedNfts;
-    return listedNfts;
+  const fetchUserListedNFTs = async (address: `0x${string}`): Promise<NFT[]> => {
+    const response = await fetch(`/api/nfts/listed?owner=${address}`).then((res) => {
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      return res.json();
+    });
+    const listedNfts = response?.listedNfts as Nft[];
+    return listedNfts.map((n) => convertAlchemyNftToNft(n));
   };
 
-  const listingNft = async (
-    nftAddress: string,
-    tokenId: string,
-    amount: string,
-    category = "",
-  ) => {
+  const listingNft = async (nftAddress: string, tokenId: string, amount: string) => {
     if (!isConnected || !address || !publicClient) return;
     const approved = await publicClient.readContract({
       address: nftAddress as `0x${string}`,
@@ -81,7 +76,7 @@ const useMarketplace = () => {
       address: NFTMP_ADDRESS,
       abi: marketplaceABI,
       functionName: "listItem",
-      args: [nftAddress, BigInt(tokenId), parseEther(amount), category],
+      args: [nftAddress, BigInt(tokenId), parseEther(amount)],
     });
   };
 

@@ -15,7 +15,7 @@ export default function ListedNfts({ searchQuery }: ListedNftsProps) {
   const { listedNtfs: nfts, isLoadingListedNft: loading } = useMarketplace();
 
   const filteredNfts = nfts.filter((nft) =>
-    nft.title.toLowerCase().includes(searchQuery?.toLowerCase() || ""),
+    nft?.title?.toLowerCase().includes(searchQuery?.toLowerCase() || ""),
   );
 
   const handleCancelClick = useCallback((id: string) => {
