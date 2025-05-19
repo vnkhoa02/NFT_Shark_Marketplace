@@ -5,21 +5,19 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import useAlchemyNft from "~/hooks/useAlchemyNft";
-import useListedNft from "~/hooks/useListedNft";
 import CancelListingDialog from "./CancelListingDialog";
 import ListingDialog from "./ListingDialog";
 import MyNftLoading from "./MyNftLoading";
 import { NftGrid } from "./NftGrid";
 
 export default function MyNFTs() {
-  const [activeTab, setActiveTab] = useState("all");
+  const [activeTab, setActiveTab] = useState("owned");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedNFT, setSelectedNFT] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [cancelOpen, setCancelOpen] = useState(false);
 
   const { nfts, loading } = useAlchemyNft();
-  const { listedNfts, isMPFetching } = useListedNft(); // listed
 
   const handleListClick = useCallback((id: string) => {
     setSelectedNFT(id);
@@ -32,7 +30,7 @@ export default function MyNFTs() {
   }, []);
 
   const filterBySearch = useCallback(
-    (list: typeof nfts | typeof listedNfts) =>
+    (list: typeof nfts) =>
       list.filter(
         (n) =>
           !searchQuery ||
@@ -44,16 +42,9 @@ export default function MyNFTs() {
 
   // 3) Memoize each tab’s data
   const ownedFiltered = useMemo(() => filterBySearch(nfts), [nfts, filterBySearch]);
-  const listedFiltered = useMemo(
-    () => filterBySearch(listedNfts),
-    [listedNfts, filterBySearch],
-  );
-  const allFiltered = useMemo(
-    () => [...ownedFiltered, ...listedFiltered],
-    [ownedFiltered, listedFiltered],
-  );
+  const listedFiltered = useMemo(() => ownedFiltered, [ownedFiltered]);
 
-  if (loading || isMPFetching) return <MyNftLoading />;
+  if (loading) return <MyNftLoading />;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -85,20 +76,12 @@ export default function MyNFTs() {
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={(val) => setActiveTab(val)} className="mb-8">
         <TabsList>
-          {["all", "owned", "listed"].map((tab) => (
+          {["owned", "listed"].map((tab) => (
             <TabsTrigger key={tab} value={tab}>
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
             </TabsTrigger>
           ))}
         </TabsList>
-
-        <TabsContent value="all" className="mt-6">
-          <NftGrid
-            nfts={allFiltered}
-            handleListNFT={handleListClick}
-            handleCancelListNFT={handleCancelClick}
-          />
-        </TabsContent>
         <TabsContent value="owned" className="mt-6">
           <NftGrid
             nfts={ownedFiltered}
@@ -123,7 +106,7 @@ export default function MyNFTs() {
         tokenId={selectedNFT}
       />
       <CancelListingDialog
-        nfts={listedNfts}
+        nfts={nfts}
         open={cancelOpen}
         onClose={() => setCancelOpen(false)}
         tokenId={selectedNFT}

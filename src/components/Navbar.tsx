@@ -75,11 +75,6 @@ function RightNav() {
                   My NFTs
                 </Link>
               </DropdownMenuItem>
-              {/* <DropdownMenuItem>
-                <Link to="/my-bets" className="w-full">
-                  My Bets
-                </Link>
-              </DropdownMenuItem> */}
               <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <ConnectWallet />

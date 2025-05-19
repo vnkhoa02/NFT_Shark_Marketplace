@@ -1,9 +1,9 @@
 import { Link } from "@tanstack/react-router";
-import { Eye, MoreHorizontal, Tag, Trash2 } from "lucide-react";
+import { MoreHorizontal, Tag, Trash2 } from "lucide-react";
 import Image from "~/components/Image";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader } from "~/components/ui/card";
+import { Card, CardContent, CardHeader } from "~/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -41,7 +41,7 @@ export function NftGrid({ nfts, handleListNFT, handleCancelListNFT }: IProps) {
   }
 
   return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <div className="grid gap-6 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
       {nfts.map((nft) => (
         <Card key={nft.id} className="overflow-hidden transition-all hover:shadow-lg">
           <CardHeader className="p-0">
@@ -95,18 +95,6 @@ export function NftGrid({ nfts, handleListNFT, handleCancelListNFT }: IProps) {
             </div>
             <div className="text-muted-foreground mt-2 text-sm">{nft.collection}</div>
           </CardContent>
-          <CardFooter className="flex items-center justify-end px-4">
-            <Link
-              to={`/nft/$id`}
-              params={{
-                id: nft.id,
-              }}
-            >
-              <Button size="sm" variant="outline">
-                <Eye className="h-4 w-4" /> View
-              </Button>
-            </Link>
-          </CardFooter>
         </Card>
       ))}
     </div>
